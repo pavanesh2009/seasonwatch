@@ -136,7 +136,8 @@ $('#tooltiptest a').tooltip({
 <!-- Select tree data and display in editable fashion -->
 <?php
 $treeid=($_GET['treeid']);
-$tree_details = mysql_query("SELECT * FROM Species_master INNER JOIN (trees,user_tree_table,tree_measurement,location_master) ON user_tree_table.tree_id = trees.tree_id AND tree_measurement.tree_id =trees.tree_id AND trees.tree_id = '$treeid' AND trees.species_id = Species_master.species_id AND user_tree_table.user_id='$_SESSION[user_id]' AND location_master.tree_location_id=trees.tree_location_id AND tree_measurement.user_id='$_SESSION[user_id]'"); 
+//AND location_master.tree_location_id=trees.tree_location_id  by Pavanesh on 9 june2010
+$tree_details = mysql_query("SELECT * FROM Species_master INNER JOIN (trees,user_tree_table,tree_measurement,location_master) ON user_tree_table.tree_id = trees.tree_id AND tree_measurement.tree_id =trees.tree_id AND trees.tree_id = '$treeid' AND trees.species_id = Species_master.species_id AND user_tree_table.user_id='$_SESSION[user_id]' AND tree_measurement.user_id='$_SESSION[user_id]'"); 
 //print_r(mysql_fetch_array($tree_details));
 $one_tree_detail = mysql_fetch_array($tree_details);
 ?>
