@@ -12,7 +12,7 @@ Please complete wherever marked xxxxxxxxx
 Note: If you use cpanel, the name will be like account_database
 *************************************************************/
 $dbname = 'ncbs_test';
-$link = mysql_connect("localhost","root","dbpass01") or die("Couldn't make connection.");
+$link = mysql_connect("localhost","root","root") or die("Couldn't make connection.");
 $db = mysql_select_db($dbname, $link) or die("Couldn't select database");
 
 /*****************ADMIN SECTION PASSWORD***************************/
