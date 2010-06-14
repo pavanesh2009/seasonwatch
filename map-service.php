@@ -16,7 +16,7 @@
 	
 		function map_query($query) {
 		// Connect
-		mysql_connect('localhost', 'root', 'dbpass01')
+		mysql_connect('localhost', 'root', 'root')
 		    OR die(fail('Could not connect to database.'));
 		
 		mysql_select_db('ncbs_test');
