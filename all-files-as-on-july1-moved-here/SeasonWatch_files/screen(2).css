@@ -1,0 +1,48 @@
+.tabs {
+	BORDER-TOP: #ccc 1px solid; MIN-HEIGHT: auto; MARGIN: -5px 0px 0.75em; OVERFLOW: auto; HEIGHT: 10%
+}
+.tabs LI:first-child {
+	MARGIN-LEFT: 20px
+}
+.tabs LI {
+	BORDER-RIGHT: #ccc 1px solid; BORDER-TOP: medium none; FLOAT: left; MARGIN: 0px 0.25em 0px 0px; BORDER-LEFT: #ccc 1px solid; WIDTH: 100px; LINE-HEIGHT: 1.5; BORDER-BOTTOM: #ccc 1px solid; LIST-STYLE-TYPE: none; BACKGROUND-COLOR: #fff; TEXT-ALIGN: center
+}
+.tabs LI A {
+	BORDER-RIGHT: #eee 1px solid; PADDING-RIGHT: 0.33em; BORDER-TOP: #eee 1px solid; DISPLAY: block; PADDING-LEFT: 0.33em; FONT-WEIGHT: bold; FONT-SIZE: 15px; BACKGROUND: #fff; FLOAT: left; PADDING-BOTTOM: 0.25em; BORDER-LEFT: #eee 1px solid; WIDTH: 100%; CURSOR: pointer; COLOR: #222; PADDING-TOP: 0.15em; BORDER-BOTTOM: medium none; TEXT-ALIGN: center
+}
+.tabs LI A.selected {
+	BORDER-RIGHT: #666 1px solid; BORDER-TOP: #666 1px solid; BORDER-LEFT: #666 1px solid; CURSOR: default; COLOR: #000; BORDER-BOTTOM: medium none; BACKGROUND-COLOR: #ffcb05; TEXT-ALIGN: center
+}
+.tabs LI A {
+	TEXT-DECORATION: none
+}
+.tabs LI A:focus {
+	TEXT-DECORATION: none
+}
+.tabs LI A:hover {
+	TEXT-DECORATION: none
+}
+.tabs LI A:focus {
+	COLOR: #000; outline: none
+}
+.tabs LI A:hover {
+	COLOR: #000; outline: none
+}
+.tabs LI A.selected:focus {
+	COLOR: #000
+}
+.tabs LI A.selected:hover {
+	COLOR: #000
+}
+.tabs LI.label {
+	BORDER-RIGHT: medium none; PADDING-RIGHT: 0.33em; BORDER-TOP: medium none; PADDING-LEFT: 0.33em; FONT-WEIGHT: bold; PADDING-BOTTOM: 0.25em; BORDER-LEFT: medium none; LINE-HEIGHT: 1.5; PADDING-TOP: 0.25em; BORDER-BOTTOM: medium none; TEXT-ALIGN: center
+}
+.tabs LI {
+	FONT-WEIGHT: normal; FONT-SIZE: 100%; MARGIN-LEFT: 20px; WIDTH: 150px; LINE-HEIGHT: normal; FONT-STYLE: normal; FONT-VARIANT: normal
+}
+#tab-set {
+	MARGIN-TOP: -5px; WIDTH: 950px
+}
+.tab-page {
+	WIDTH: 920px
+}

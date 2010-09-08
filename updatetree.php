@@ -1,6 +1,6 @@
 <?php 
 include './includes/dbc.php';
-mysql_select_db("ncbs_test");
+//mysql_select_db("ncbs_test");
 page_protect();
 //print_r($HTTP_POST_VARS);
 
@@ -24,7 +24,7 @@ $treelocid = $row['tree_location_id'];
 //echo $treelocid;
 }
 
-if($_POST['doUpdate'] == 'Update') {
+if($_POST['doUpdate'] == 'Update') {
 $dfw_fieldname="";
 $dfw_value="";
 $dos_fieldname="";
@@ -73,23 +73,9 @@ $sql1 = "UPDATE trees SET
               ".$dfw_fieldname.$dfw_value.$dos_fieldname.$dos_value."
               `aspect` ='".addslashes($_POST[aspect])."'
                WHERE tree_id = '$treeid'";  
-              mysql_query($sql1,$link)or die("Insertion Failed:" .mysql_error()); 
+//echo "$sql"; 			   
+mysql_query($sql1,$link)or die("Insertion Failed:" .mysql_error()); 
 
-//if($_POST['doUpdate'] == 'Update') 
-//{                    /*$sql1 = "UPDATE trees SET  
-              `tree_id` = '$treeid',                                                                                        
-       		  `tree_desc`='$_POST[tree_desc]',
-              `is_fertilised`='$_POST[is_fertilised]',
-              `is_watered`='$_POST[is_watered]', 
-              `species_id`='$speciesId',
-              `tree_location_id`='$treelocid',
-              `location_type`='$_POST[location_type]',
-              `aspect`='$_POST[aspect]',
-              `distance_from_water`='$_POST[distance_from_water]',
-              `degree_of_slope`='$_POST[degree_of_slope]'
-               WHERE tree_id= '$treeid'";  */
-//echo "sql1";
-//mysql_query($sql1,$link)or die("Insertion Failed:" .mysql_error()); 
 
 //echo "ID of last inserted record is: " . mysql_insert_id();
 //$tree_id = mysql_insert_id();
@@ -124,7 +110,7 @@ mysql_query($sql3,$link) or die("Insertion Failed:" .mysql_error().$sql3);
 $sql4 = "UPDATE location_master SET  
               `tree_location_id` = '$treelocid',                                                                                       
                WHERE tree_location_id= '$treelocationname'";  
-//echo "sql1";
+//echo "sql4";
 mysql_query($sql1,$link)or die("Insertion Failed:" .mysql_error()); 
 }
 mysql_close($link);
@@ -143,6 +129,3 @@ mysql_close($link);
 window.top.tb_remove();
 </script>
 </html>
-
-
-

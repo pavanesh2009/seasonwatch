@@ -8,7 +8,7 @@ if ($_POST['doReset']=='Reset')
 $user_email = mysql_real_escape_string($_POST['user_email']);
 
 //check if activ code and user is valid as precaution
-$rs_check = mysql_query("select id from users where user_email='$user_email'") or die (mysql_error()); 
+$rs_check = mysql_query("select user_id from users where user_email='$user_email'") or die (mysql_error()); 
 $num = mysql_num_rows($rs_check);
   // Match row found with more than 1 results  - the user is authenticated. 
     if ( $num <= 0 ) { 
@@ -54,33 +54,23 @@ exit();
 }
 
 ?>
-<html>
-<head>
-<title>Forgot Password</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<script language="JavaScript" type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<script language="JavaScript" type="text/javascript" src="js/jquery.validate.js"></script>
+<? 
+   session_start();
+   $page_title="SeasonWatch";
+   include("main_includes.php");
+?>
+
   <script>
   $(document).ready(function(){
     $("#actForm").validate();
   });
   </script>
-<link href="./css/styles_new.css" rel="stylesheet" type="text/css">
-<?php
-include("header_head.php");
-?>
 </head>
 
 
 <body>
-<link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print">
-<link rel="stylesheet" href="blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
-<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="js/jquery.validate.js"></script>
-<link rel="stylesheet" href="css/styles_new.css" type="text/css">
 <?php
-include("header_body.php");
+include("header.php");
 ?>
 <div class="container first_image" style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;">
 <table width="100%" border="0" cellspacing="0" cellpadding="5" class="main">
@@ -146,5 +136,9 @@ include("header_body.php");
 <div class="container bottom">
 </div>
 <?php mysql_close($link);?>
+<?php 
+   include("footer.php");
+?>
+
 </body>
 </html>

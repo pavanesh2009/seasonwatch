@@ -1,5 +1,7 @@
-<?php 
-include '../includes/dbc.php';
+<?php
+session_start();
+   $page_title=":: SeasonWatch Admin ::";
+   include("../main_includes.php");
 ?>
 <html>
 <head>
@@ -14,31 +16,33 @@ top.location.replace( "admin.php" );
 </script>
 </head>
 
+
 <body>
-<link rel="stylesheet" href="../css/styles_new.css" type="text/css"></link>
-<link rel="stylesheet" href="../css/register.css" type="text/css">
-<div class="container first_image" style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;">
+<div class='container first_image'>
 <table>
-<tbody>
 <tr>
-<td/>
+<td><b><h3>Add a new species</h3></b></td>
 </tr>
-</tbody>
 </table>
 <div>
-<hr/>
+<hr>
 </div>
 
 <table style="width: 930px; margin-left: auto; margin-right: auto;">
+<tbody>
 <tr>
 <td>
-<a href="admin.php" title="species_page" onclick="redirectout();" >
-<img alt="" src="./images/cpanel.png" />cpanel</a>
+<a href="admin.php" title="species_page">
+<img alt="" src="./images/cpanel.png" onclick="redirectout();">cpanel</a>
+&nbsp;
+&nbsp;
 &nbsp;
 &nbsp;
 </td>
 </tr>
+</tbody>
 </table>
+
 
 
 <table style="width: 930px; margin-left: auto; margin-right: auto;">
@@ -131,28 +135,28 @@ top.location.replace( "admin.php" );
 
 <tr>
 <td align=right>Size Description:</td>
-<td><textarea name="size_description" cols="40" rows="5" onclick="this.value='';">
+<td><textarea id='sizedesc' name="size_description" cols="40" rows="5" class="emptyonclick" >
 Enter your comments here
 </textarea><br> </td>
 </tr>
 
 <tr>
 <td align=right>Flower Description:</td>
-<td><textarea name="flower_description" cols="40" rows="5" onclick="this.value='';">
+<td><textarea name="flower_description" cols="40" rows="5"  >
 Enter your comments here
 </textarea><br> </td> 
 </tr>
 
 <tr>
 <td align=right>Bark Description:</td>
-<td><textarea name="bark_description" cols="40" rows="5" onclick="this.value='';">
+<td><textarea name="bark_description" cols="40" rows="5" >
 Enter your comments here
 </textarea><br> </td> 
 </tr>
 
 <tr>
 <td align=right>Fruit Description:</td>
-<td><textarea name="fruit_description" cols="40" rows="5" onclick="this.value='';">
+<td><textarea name="fruit_description" cols="40" rows="5" >
 Enter your comments here
 </textarea><br> </td> 
 </tr>
@@ -204,21 +208,21 @@ Enter your comments here
 
 <tr>
 <td align=right>Spine Thorn Description:</td>
-<td><textarea name="spine_thorn_description" cols="40" rows="5" onclick="this.value='';">
+<td><textarea name="spine_thorn_description" cols="40" rows="5">
 Enter your comments here
 </textarea><br> </td>
 </tr>
 
 <tr>
 <td align=right>Special Notes on the Species:</td>
-<td><textarea name="special_notes_on_the_species" cols="40" rows="5" onclick="this.value='';">
+<td><textarea name="special_notes_on_the_species" cols="40" rows="5" >
 Enter your comments here
 </textarea><br> </td>
 </tr>
-
+<!--onclick="this.value='';"-->
 <tr>
 <td align=right>Special notes on phenology:</td>
-<td><textarea name="special_notes_on_phenology" cols="40" rows="5"onclick="this.value='';">
+<td><textarea name="special_notes_on_phenology" cols="40" rows="5">
 Enter your comments here
 </textarea><br> </td>
 </tr>
@@ -241,8 +245,11 @@ Enter your comments here
 </table>
 </form>
 </div>
+<div class="container bottom">
 </div>
-<?php mysql_close($link);?>
+<?php 
+   include("../footer.php");
+?>
 </body>
 </html>
 

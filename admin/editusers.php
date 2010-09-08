@@ -1,5 +1,6 @@
 <?php 
 include '../includes/dbc.php';
+include('../main_includes.php');
 ?>
 <head>
 <title>Edit User Page</title>
@@ -21,8 +22,8 @@ include '../includes/dbc.php';
 <?php
 $userID = $_GET['userid'];
 //echo $userID; 
-$users_details = mysql_query("SELECT * FROM users Where user_id='$userID'"); 
-//print_r(mysql_fetch_array($tree_details));
+$users_details = mysql_query("SELECT * from users where user_id='$userID'"); 
+//print_r(mysql_fetch_array($users_details));
 $one_user_detail = mysql_fetch_array($users_details);
 ?>
 
@@ -93,10 +94,27 @@ $one_user_detail = mysql_fetch_array($users_details);
 </tr>
 
 
-<tr>
-<td align=right>state:</td>
-<td><input type="text" name="state" value="<? echo $one_user_detail['state'];?>" style="width:200px;"></td>
+<tr> 
+<td align=right>State:</td>
+<td><select name="state_id" type="text" id="state_id"> <?php 
+$sql = mysql_query("SELECT * FROM seswatch_states ORDER BY state_id");
+echo "<option value='' SELECTED>------Choose your State------</option>";
+while ($data = mysql_fetch_array($sql))
+{
+if($data['state_id']==$one_user_detail['state_id'])
+{
+$data1 .= "<option  value='".$data['state_id']."' selected>".$data['state']."</option>";
+}
+else 
+{
+$data1 .= "<option  value='".$data['state_id']."'>".$data['state']."</option>";
+}
+}
+echo $data1;
+?>" > 
+</td>
 </tr>
+
 
 <!--
 <tr>
@@ -114,7 +132,7 @@ $one_user_detail = mysql_fetch_array($users_details);
 <tr>
 <td colspan=2 align=center>
 <br>
-<input name="doUpdate" type="submit" id="doUpdate" value="Update">
+<input name="doUpdate" type="submit" id="doUpdate" value="Update" onclick="javascript:window.top.tb_remove();">
 &nbsp;&nbsp;
 </br>
 </td>

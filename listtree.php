@@ -1,31 +1,9 @@
-<?php 
-include './includes/dbc.php';
-mysql_select_db("ncbs_test");
-page_protect();
-//print_r($HTTP_POST_VARS);
+<? 
+   session_start();
+   $page_title="SeasonWatch";
+   include("main_includes.php");
 ?>
 
- 
-<html lang="en">
-<head>
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
-<title>Added Tree List</title>
-<link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print">
-<link rel="stylesheet" href="blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
-<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<link rel="stylesheet" href="css/styles_new.css" type="text/css">
-<link type="text/css" rel="stylesheet" href="js/thickbox/thickbox.css"></link>
-<script language="javascript" src="js/thickbox/thickbox.js"></script>
-<!--check for responsibility-->
-<script type="text/javascript" src="js/jquery.validate.js"></script>
-<script language="javascript" src="js/jquery.bgiframe.min.js"></script> 
-<script language="javascript" src="js/jquery.autocomplete.js"></script>
-<link type="text/css" rel="stylesheet" href="js/jquery.autocomplete.css"></link>
-<script charset="utf-8" type="text/javascript" src="js/jquery.emptyonclick.js"></script>
-<script type="text/javascript" src="js/jqModal.js"></script>
-<script type="text/javascript" src="js/jquery.autogrow.js"></script>
-<script type="text/javascript" src="js/jquery.corner.js"></script>
 
 
 <script type = "text/javascript">
@@ -43,15 +21,11 @@ url = 'listtree.php';
 }
 }
 </script>
-<?php
-include ("contribheader_head.php");
-?>
-</head>
 
 
 <body>
 <?php 
-include ("contribheader_body.php");
+include ("header.php");
 ?>
 
  
@@ -69,6 +43,11 @@ echo "<div class=\"notice\">Successfully Deleted</div>";
 
 
 <div class="container first_image" style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;">
+   <div id='tab-set'>   
+     <ul class='tabs'>
+        <li><a href='#x' class='selected'>edit tree</a></li>
+    </ul>
+   </div>
 <table>
 <tbody>
 <tr>
@@ -86,6 +65,11 @@ echo "<div class=\"notice\">Successfully Deleted</div>";
 <col style="width: 750px;"/>
 <col style="width: 650px;"/>
 <col style="width: 750px;"/>
+<?php if ($_SESSION[group_role]=='coord')
+{
+?>
+<col style="width: 750px;"/>
+<? } ?>
 <col style="width: 750px;"/>
 <col style="width: 650px;"/>
 </colgroup>
@@ -95,6 +79,11 @@ echo "<div class=\"notice\">Successfully Deleted</div>";
 <th class="header">Primary common Name</th>
 <th class="header">Scientific name</th>
 <th class="header">Tree Nickname</th>
+<?php if ($_SESSION[group_role]=='coord')
+{
+?>
+<th class="header">Assigned to Member</th>
+<? } ?>
 <th class="header">Edit</th>
 <th class="header">Delete</th>
 
@@ -107,7 +96,14 @@ $count=0;
 print "<tr class='delboxtr'>";
 
 //$user_tree_table_settings = mysql_query("SELECT tree_nickname, tree_id FROM  user_tree_table WHERE user_id='".$_SESSION[user_id]."'");
-$user_tree_table_settings = mysql_query("SELECT trees.tree_id, tree_nickname, species_scientific_name, species_primary_common_name, user_tree_table.user_tree_id FROM Species_master INNER JOIN (trees INNER JOIN user_tree_table ON trees.tree_id = user_tree_table.tree_id AND user_tree_table.user_id='$_SESSION[user_id]') ON Species_master.species_id = trees.species_id ORDER BY trees.tree_id");
+if ($_SESSION[group_role]=='coord')
+{
+	$user_tree_table_settings = mysql_query("SELECT trees.tree_id, tree_nickname, species_scientific_name, species_primary_common_name, user_tree_table.user_tree_id FROM species_master INNER JOIN (trees INNER JOIN user_tree_table ON trees.tree_id = user_tree_table.tree_id AND user_tree_table.user_id  IN (select users.user_id from users where users.group_id='$_SESSION[group_id]')) ON species_master.species_id = trees.species_id ORDER BY trees.tree_id");
+}
+else
+{
+		$user_tree_table_settings = mysql_query("SELECT trees.tree_id, tree_nickname, species_scientific_name, species_primary_common_name, user_tree_table.user_tree_id FROM species_master INNER JOIN (trees INNER JOIN user_tree_table ON trees.tree_id = user_tree_table.tree_id AND user_tree_table.user_id='$_SESSION[user_id]') ON species_master.species_id = trees.species_id ORDER BY trees.tree_id");
+}
   
 while ($row_settings = mysql_fetch_array($user_tree_table_settings)) 
 {
@@ -119,10 +115,19 @@ $count++;
 print "<td style='width:220px'>".$count."</td>";
 //$trees_settings = mysql_query("SELECT species_id FROM trees WHERE tree_id='".$row_settings['tree_id']."'");
 //print $row_settings['species_id'];
-//$species_settings = mysql_query("SELECT species_scientific_name,species_primary_common_name FROM Species_master WHERE species_id=".$trees_settings['species_id']);
+//$species_settings = mysql_query("SELECT species_scientific_name,species_primary_common_name FROM species_master WHERE species_id=".$trees_settings['species_id']);
 print "<td>".$row_settings['species_primary_common_name']."</td>";
 print "<td><i>".$row_settings['species_scientific_name']. "</i></td>";
 print "<td style='width:220px'>".$row_settings['tree_nickname']."</td>";
+
+if ($_SESSION[group_role]=='coord')
+{
+$assigned_to_member_rows = mysql_query("SELECT user_tree_table.user_id, full_name 
+FROM user_tree_table INNER JOIN users 
+ON user_tree_table.user_id = users.user_id AND tree_id='".$row_settings['tree_id']."';");
+$assigned_to_member=mysql_fetch_array($assigned_to_member_rows);
+	print "<td>$assigned_to_member[full_name]&nbsp;&nbsp;&nbsp;&nbsp;(<a class=thickbox href=\"reassignuser.php?treeid=".$row_settings['tree_id']."&assigned_user=".$assigned_to_member[user_id]."&TB_iframe=true&height=300&width=530\">Change</a>)</td>";
+}
 $edittreeLink = "<a class=thickbox href=\"edittree.php?treeid=".$row_settings['tree_id']."&TB_iframe=true&height=500&width=700\">Edit</a>";
 print "<td>$edittreeLink</td>";
 //$deletetreelink="<a class=thickbox href=\"deletetree.php?usertreeid=".$row_settings['user_tree_id']."\">Delete</a>";
@@ -137,7 +142,7 @@ print "</tr>";
 
 $trees_settings = mysql_query("SELECT tree_location FROM trees WHERE species_id='$species_ID'"); 
 
-$species_settings = mysql_query("SELECT species_scientific_name,species_primary_common_name,family FROM Species_master WHERE species_id='$species_ID'");
+$species_settings = mysql_query("SELECT species_scientific_name,species_primary_common_name,family FROM species_master WHERE species_id='$species_ID'");
 
 while ($row2_settings = mysql_fetch_array($species_settings)) 
 {
@@ -175,6 +180,9 @@ echo "</tbody></table>";
 <div class="container bottom">
 <?php mysql_close($link);?>
 </div>
+<?php 
+   include("footer.php");
+?>
 </body>
 </html>
 

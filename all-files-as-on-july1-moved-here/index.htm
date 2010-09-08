@@ -1,0 +1,209 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0031)http://localhost/wordpress/?p=1 -->
+<HTML lang=en><HEAD><TITLE>SeasonWatch</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=utf-8"><LINK 
+href="images/favicon.ico" rel="SHORTCUT ICON">
+<SCRIPT src="SeasonWatch_files/jquery.js" type=text/javascript></SCRIPT>
+
+<STYLE type=text/css>#jsddm {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FONT-SIZE: 14px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px
+}
+#jsddm LI {
+	BACKGROUND: #000000; FLOAT: left; LIST-STYLE-TYPE: none
+}
+#jsddm LI A {
+	BORDER-RIGHT: white 1px solid; PADDING-RIGHT: 5px; DISPLAY: block; PADDING-LEFT: 5px; FONT-SIZE: 100%; BACKGROUND: #000000; PADDING-BOTTOM: 3px; WIDTH: auto; COLOR: #fff; PADDING-TOP: 3px; WHITE-SPACE: nowrap; TEXT-DECORATION: none
+}
+#jsddm LI A:hover {
+	COLOR: #ffcb1a
+}
+#jsddm LI UL {
+	PADDING-RIGHT: 0px; BORDER-TOP: #ffcb1a 1px solid; PADDING-LEFT: 0px; VISIBILITY: hidden; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px; POSITION: absolute
+}
+#jsddm LI UL LI {
+	DISPLAY: inline; FLOAT: none
+}
+#jsddm LI UL LI A {
+	BORDER-RIGHT: #ffcb1a 1px solid; BORDER-TOP: medium none; FONT-WEIGHT: normal; FONT-SIZE: 14px; BACKGROUND: #333; BORDER-LEFT: #ffcb1a 1px solid; WIDTH: auto; BORDER-BOTTOM: #ffcb1a 1px solid
+}
+#jsddm LI UL LI A:hover {
+	BACKGROUND: #000; COLOR: #fff
+}
+</STYLE>
+
+<SCRIPT type=text/javascript>
+var timeout = 500;
+var closetimer = 0;
+var ddmenuitem = 0;
+function jsddm_open()
+{ jsddm_canceltimer();
+jsddm_close();
+ddmenuitem = $(this).find('ul').css('visibility', 'visible');}
+function jsddm_close()
+{ if(ddmenuitem) ddmenuitem.css('visibility', 'hidden');}
+function jsddm_timer()
+{ closetimer = window.setTimeout(jsddm_close, timeout);}
+function jsddm_canceltimer()
+{ if(closetimer)
+{ window.clearTimeout(closetimer);
+closetimer = null;}}
+$(document).ready(function()
+{ $('#jsddm > li').bind('mouseover', jsddm_open)
+$('#jsddm > li').bind('mouseout', jsddm_timer)});
+document.onclick = jsddm_close;
+</SCRIPT>
+<!--  <script> 
+$(document).ready(function() {
+ 
+$(".filter").corner();
+$(".first_image").corner('bottom');
+});
+</script>   
+
+
+
+<script>
+$(document).ready(function(){
+$('#query').autocomplete("autocomplete.php", {
+// width: 388,
+selectFirst: false,
+matchSubset :true,
+matchContains: false,
+formatItem: formatItem
+
+});
+  
+$("#query").result(function(event, data, formatted) {
+ 
+document.location.href= "../guide.php?id="+ data[1];
+ 
+});
+});
+function formatItem(row) {
+var completeRow;
+completeRow = new String(row);
+var scinamepos = completeRow.lastIndexOf("(");
+var rest = completeRow.substr(0,scinamepos)
+var sciname = completeRow.substr(scinamepos);
+var commapos = sciname.lastIndexOf(",");
+sciname = sciname.substr(0,commapos);
+var newrow = rest + '<br><i>' + sciname + '</i>';
+return newrow;
+}
+</script>  --><LINK media="screen, projection" 
+href="SeasonWatch_files/screen.css" type=text/css rel=stylesheet><LINK 
+media=print href="SeasonWatch_files/print.css" type=text/css rel=stylesheet><!-- <link rel="stylesheet" href="../seasonwatch/blueprint/ie.css" type="text/css" media="ie"> --><LINK 
+media="screen, projection" href="SeasonWatch_files/screen(1).css" type=text/css 
+rel=stylesheet>
+<SCRIPT src="" type=text/javascript></SCRIPT>
+
+<SCRIPT src="" type=text/javascript></SCRIPT>
+<LINK href="SeasonWatch_files/styles_new.css" type=text/css 
+rel=stylesheet></LINK><LINK href="SeasonWatch_files/screen(2).css" type=text/css 
+rel=stylesheet></LINK>
+<META content="MSHTML 6.00.6000.17023" name=GENERATOR></HEAD>
+<BODY>
+<DIV class="container top" 
+style="BACKGROUND-POSITION: left top; BACKGROUND-IMAGE: url(../seasonwatch/images/pagetopstrip.png); MARGIN-LEFT: auto; WIDTH: 990px; MARGIN-RIGHT: auto; PADDING-TOP: 30px; BACKGROUND-REPEAT: no-repeat; BACKGROUND-COLOR: #fff">
+<DIV class=left 
+style="PADDING-LEFT: 15px; BACKGROUND-IMAGE: url(../seasonwatch/images/lefttorightfullpage.png); BACKGROUND-REPEAT: repeat-y">
+<DIV class="container logo-box" 
+style="MARGIN-TOP: 0px; PADDING-BOTTOM: 10px; MARGIN-LEFT: auto; MARGIN-RIGHT: auto; HEIGHT: 110px">
+<center><IMG title=SeasonWatch 
+alt=SeasonWatch 
+src="SeasonWatch_files/swlogo.png"><br/><br/><br/><br/><br/>
+<font size="+2" >To be launched soon. Please check back by June 25th.</font>
+</center>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<DIV style="MARGIN-TOP: 26px; FLOAT: right">
+<DIV style="FLOAT: right">
+<FORM id=logForm name=logForm action=../seasonwatch/login.php method=post>
+<img src="./SeasonWatch_files/sw_banner.jpg" align="centre">
+
+<SCRIPT>
+var timeout = 500;
+var closetimer = 0;
+var ddmenuitem = 0;
+function jsddm_open()
+{ jsddm_canceltimer();
+jsddm_close();
+ddmenuitem = $(this).find('ul').css('visibility', 'visible');}
+function jsddm_close()
+{ if(ddmenuitem) ddmenuitem.css('visibility', 'hidden');}
+function jsddm_timer()
+{ closetimer = window.setTimeout(jsddm_close, timeout);}
+function jsddm_canceltimer()
+{ if(closetimer)
+{ window.clearTimeout(closetimer);
+closetimer = null;}}
+$(document).ready(function()
+{ $('#jsddm > li').bind('mouseover', jsddm_open)
+$('#jsddm > li').bind('mouseout', jsddm_timer)});
+document.onclick = jsddm_close;
+</SCRIPT>
+
+<SCRIPT type=text/javascript>
+$('.default-value').each(function() {
+var default_value = this.value;
+$(this).css('color', '#666'); // this could be in the style sheet instead
+$(this).focus(function() {
+if(this.value == default_value) {
+this.value = '';
+$(this).css('color', '#333');
+}
+});
+$(this).blur(function() {
+if(this.value == '') {
+$(this).css('color', '#666');
+this.value = default_value;
+}
+});
+});
+ 
+$('#password-clear').show();
+$('#password-password').hide();
+ 
+$('#password-clear').focus(function() {
+$('#password-clear').hide();
+$('#password-password').show();
+$('#password-password').focus();
+});
+$('#password-password').blur(function() {
+if($('#password-password').val() == '') {
+$('#password-clear').show();
+$('#password-password').hide();
+}
+});
+ 
+var toggle = false;
+$(".rememberme").click(function () {
+if( toggle == false) {
+$('#remember').val('1');
+toggle = true;
+} else {
+$('#remember').val('0'); toggle = false;
+}
+$(".rememberme").toggle();
+});
+</SCRIPT>
+
+<DIV class="container first_image" 
+style="BACKGROUND-POSITION: left bottom; BACKGROUND-IMAGE: url(../seasonwatch/images/gradientbg.png); PADDING-BOTTOM: 5px; WIDTH: 950px; BACKGROUND-REPEAT: repeat-x; BACKGROUND-COLOR: #fffff9"><!-- style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;"> -->
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD></TD></TR></TBODY></TABLE>
+<DIV></DIV>
+<DIV id=content>
+<DIV class="post-1 post hentry category-uncategorized" id=post-1><!-- <h2 class="post-title">Why Join</h2> -->
+<DIV id=tab-set>
+
+</DIV><!-- 
+
+<ul class="comment_links">
+<li><a href="http://localhost/wordpress/wp-trackback.php?p=1" rel="trackback">TrackBack <abbr title="Uniform Resource Identifier">URI</abbr></a></li></ul>
+
+
+ --></DIV></DIV></DIV>
+<DIV class="container bottom" 
+style="BACKGROUND-IMAGE: url(../seasonwatch/images/pagebottomstrip.png); MARGIN-LEFT: auto; WIDTH: 990px; MARGIN-RIGHT: auto; PADDING-TOP: 30px; BACKGROUND-REPEAT: no-repeat; BACKGROUND-COLOR: #fff"></DIV></DIV></BODY></HTML>

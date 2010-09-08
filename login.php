@@ -1,5 +1,5 @@
 <?php 
-include("includes/dbc.php");
+	include("includes/dbc.php");
 if ($_POST['doLogin']=='go')
 {
 $user_email = mysql_real_escape_string($_POST['usr_email']);
@@ -14,7 +14,7 @@ if (strpos($user_email,'@') === false) {
 }
 
 
-$sql = "SELECT `user_id`,`full_name` FROM users WHERE 
+$sql = "SELECT `user_id`,`full_name`,`user_category`,`group_id`,`group_role`  FROM users WHERE 
            $user_cond
 			AND `pwd` = '$md5pass'
 			"; 
@@ -25,7 +25,7 @@ $num = mysql_num_rows($result);
   // Match row found with more than 1 results  - the user is authenticated. 
     if ( $num > 0 ) { 
 	
-	list($user_id,$full_name) = mysql_fetch_row($result);
+	list($user_id,$full_name,$user_category,$group_id,$group_role) = mysql_fetch_row($result);
 	
 	//if(!$approved) {
 	//$msg = "Account not activated. Please check your email for activation code";
@@ -47,8 +47,20 @@ $num = mysql_num_rows($result);
 				  setcookie("user_name", $_SESSION['user_name'], time()+60*60*24*60, "/");
 				   }
 		
-			
-		header("Location: contrib.php");
+		if ($user_category=='individual')
+				header("Location: contrib.php");
+		elseif ($user_category=='school')
+		{
+			$sql = "SELECT `group_name`  FROM user_groups WHERE 
+					`group_id` = '$group_id'
+					"; 
+			$result2 = mysql_query($sql) or die (mysql_error()); 
+			list($group_name) = mysql_fetch_row($result2);
+			$_SESSION['school_name'] = $group_name;
+			$_SESSION['group_id'] = $group_id;
+			$_SESSION['group_role'] = $group_role;
+			header("Location: school_contrib.php");
+		}
 		}
 		else
 		{
@@ -61,33 +73,23 @@ $num = mysql_num_rows($result);
 					 
 
 ?>
-<html>
-<head>
-<title>Seasonwatch Login</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<script language="JavaScript" type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<script language="JavaScript" type="text/javascript" src="js/jquery.validate.js"></script>
+<? 
+   session_start();
+   $page_title="SeasonWatch";
+   include("main_includes.php");
+?>
   <script>
   $(document).ready(function(){
     $("#logForm").validate();
   });
   </script>
-<!--<link href="./css/styles.css" rel="stylesheet" type="text/css"></link>-->
-<link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print">
-<link rel="stylesheet" href="blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
-<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="js/jquery.validate.js"></script>
-<link rel="stylesheet" href="css/styles_new.css" type="text/css">
 
-<?php include 'header_head.php';
-?>
-</head>
 <body>
 
-<?php include 'header_body.php';
+<?php include 'header.php';
 ?>
 <div class="container first_image" style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;">
+
 <table>
 <tbody>
 <tr>
@@ -176,5 +178,8 @@ This code is to show error messages
 <div class="container bottom">
 <?php mysql_close($link);?>
 </div>
+<?php 
+   include("footer.php");
+?>
 </body>
 </html>

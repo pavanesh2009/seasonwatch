@@ -1,7 +1,8 @@
 <?php
-
-include '../includes/dbc.php';
-page_protect();
+session_start();
+   $page_title=":: SeasonWatch Admin ::";
+   include("../main_includes.php");
+include("../includes/dbc.php")
 ?>
 
 <html>
@@ -10,7 +11,7 @@ page_protect();
 </head>
 <body>
 <link rel="stylesheet" href="../css/styles_new.css" type="text/css">
-<div class="container first_image" style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;">
+<div class='container first_image'>
 <table>
 <tbody>
 <tr>
@@ -29,11 +30,12 @@ $species_search_names = $primary_name . ", " . $scientific_name;
 //echo $search_name; 
 
 if($_POST['Submit'] == 'Submit')  
-{                     foreach($_POST as $key => $value)
+{                     
+foreach($_POST as $key => $value)
 { 
 $data[$key] = filter($value);
 }  
-$sql = "INSERT INTO Species_master
+$sql = "INSERT INTO species_master
   			 (species_primary_common_name,
   			 species_scientific_name,
   			 species_search_names, 
@@ -100,24 +102,8 @@ $sql = "INSERT INTO Species_master
 </head>
 
 <body>
-<link rel="stylesheet" href="../blueprint/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="../blueprint/print.css" type="text/css" media="print">
-<link rel="stylesheet" href="../blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
-<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="js/jquery.validate.js"></script>
-<link rel="stylesheet" href="../css/styles_new.css" type="text/css">
 
-<div class="container first_image" style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;">
-<table>
-<tbody>
-<tr>
-<td/>
-</tr>
-</tbody>
-</table>
-<div>
-<hr/>
-</div>
+<div class='container first_image'>
 <!--echo "You have Submitted successfully"; -->
 <?php 
 echo "<table border='1'>
@@ -151,8 +137,6 @@ echo "<table border='1'>
 <th>Special Notes on the Species</th>
 <th>Special notes on phenology</th>
 </tr>";
-
-
 
 $species_primary_common_name=$_POST['species_primary_common_name'];
 echo "<td>" . $species_primary_common_name . "</td>";
@@ -237,12 +221,17 @@ echo "</table>";
 ?>
 
 
-<html> 
+ 
 <p align="center"> 
 <input type=reset  value="Back"  class=buttonstyle onclick="javascript:window.location.href='addspecies.php';">
 </p>
 </div>
 </div>
+<div class="container bottom">
 <?php mysql_close($link);?>
+</div>
+<?php 
+   include("../footer.php");
+?>
 </body>
 </html>

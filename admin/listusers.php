@@ -1,5 +1,14 @@
 <?php
-include '../includes/dbc.php';
+    session_start();
+   $page_title=":: User Manager Main Page ::";
+    //include("../main_includes.php");
+    include_once("../includes/dbc.php");
+
+if(!isset($_SESSION['user_admin'])) {
+header("Location: index.php");
+exit();
+}
+
 $page_limit = 15; 
 
 if (!isset($_GET['page']) )
@@ -29,20 +38,13 @@ mysql_query($sql1,$link)or die("Insertion Failed:" .mysql_error());
 } 
 ?>
 
-
-
 <html>
 <head>
-<title>User Manager Main Page</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<script language="JavaScript" type="text/javascript" src="../js/jquery-1.3.2.min.js"></script>
-<link type="text/css" rel="stylesheet" href="js/thickbox/thickbox.css"></link>
-<script language="javascript" src="js/thickbox/thickbox.js"></script>
-<link rel="stylesheet" href="../blueprint/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="../blueprint/print.css" type="text/css" media="print">
-<link rel="stylesheet" href="../blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
-<script type="text/javascript" src="../js/jquery-1.3.2.min.js"></script>
-<link rel="stylesheet" href="../css/styles_new.css" type="text/css"></link>
+
+<?php
+include("../main_includes.php");
+?>
+
 <script type = "text/javascript">
 function confirmDelete(delUrl) {
   if (confirm("Are you sure you want to delete")) {
@@ -58,16 +60,96 @@ url = 'listusers.php';
 }
 }
 </script>
+<script type="text/javascript">
+        $(function() { 
 
+             $("#table1")
+                .tablesorter({  headers: { 
+                   5: { sorter: false }, 6: { sorter: false }, 7 : { sorter: false }, 8: { sorter: false } },widthFixed: true, widgets: ['zebra']})
+                   .tablesorterPager({container: $("#pager"), positionFixed: false});
 
-
+              $("#table2")
+                .tablesorter({widthFixed: true, widgets: ['zebra']})
+                .tablesorterPager({container: $("#pager2"), positionFixed: false});
+                     
+        });
+    </script> 
 </head>
 <body>
-<div class="container first_image" style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;">
+<div class='container-top'>
+<div class='container first_image'>
+<table>
+<tbody>
+<tr>
+<td><b><h3>All added Users</h3></b></td>
+<td>
+</td></tr>
+</tbody>
+</table>
+<div>
+<hr>
+</div>
+
+
+<table style="width: 930px; margin-left: auto; margin-right: auto;">
+
+<tbody><tr>
+<td>
+<a href="admin.php" title="species_page">
+<img alt="" src="./images/cpanel.png">cpanel</a>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+</td>
+
+
+<td>
+<a href="species_page.php" title="species_page">
+<img alt="" src="./images/addedit.png">Add new species</a>
+&nbsp;
+
+&nbsp;
+&nbsp;
+&nbsp;
+</td>
+
+<td>
+<a href="listspecies.php" title="species_page">
+<img alt="" src="./images/address_f2.png">All Species List</a>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+</td>
+
+<td>
+<a href="listusers.php" title="species_page">
+
+<img alt="" src="./images/icon-48-user.png">User Manager</a>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+</td>
+
+
+<td>
+<a href="admin_logout.php" title="species_page">
+<img alt="" src="./images/logout.png">Logout</a>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+
+</td>
+
+<div class='container first_image'>
 <table>
 <tbody>
 <tr>
 <td/>
+<b>All Registered Users</b>
 </tr>
 </tbody>
 </table>
@@ -76,66 +158,38 @@ url = 'listusers.php';
 </div>
 
 <table style="width: 930px; margin-left: auto; margin-right: auto;">
-
 <tr>
-<td>
-<a href="admin.php" title="species_page">
-<img alt="" src="./images/cpanel.png" />cpanel</a>
-</td>
-
 <td>
 <a href="addusers.php" title="species_page">
 <img alt="" src="./images/addusers.png" />Add new user</a>
-</td>
-
-
-<td>
-<a href="admin_logout.php" title="species_page">
-<img alt="" src="./images/logout.png" />Logout</a>
-</td>
-
-<td width="10%"><h2>Administration Page</h2></td> 
+</td> 
 </tr>
 </table>
 
-
-
-<table width="99%" border="0" align="center" cellpadding="0" cellspacing="0">
-<!-- 
-<a href="newuser.php">Create User</a><br>
-<a href="admin_ban.php">Ban/Unban </a><br> -->
- 
- <tr bgcolor="#f5ecf9">  
- <td width="4%"><strong>ID</strong></td>
- <td> <strong>Date</strong></td>
- <td><strong>User Name</strong></td>
- <td width="18%"><strong>Email</strong></td>
- <td><strong>Location</strong></td>
- <td><strong>Edit</strong></td>
- <td><strong>Delete</strong></td>
- <td><strong>Login</strong></td>
- <!--<td width="10%"><strong>Approved</strong></td>
- <td width="8%"> <strong>Banned</strong></td>-->
- <td width="5%">&nbsp;</td>
-  </tr>
-     <tr> 
-       <td>&nbsp;</td>
-       <td width="12%">&nbsp;</td>
-       <td width="18%">&nbsp;</td>
-       <td>&nbsp;</td>
-       <td>&nbsp;</td>
-       <td>&nbsp;</td>
-       <td>&nbsp;</td>
-     </tr>
+<div>      
+<table id="table1" class="tablesorter">
+                <thead>
+                        <tr>
+                                <th style='width:80px'>User ID</th>
+                                <th style='width:120px'>Join Date</th>           
+                                <th style='width:120px'>User Name</th>
+                                <th style='width:100px'>Email</th>                        
+				<th style='width:200px'>Location</th>
+<th style='width:150px'>Edit</th>
+<th style='width:150px'>Delete</th>
+<th style='width:150px'></th>
+</tr>
+                </thead>
+<tbody>    
      
-<?php  while ($prows = mysql_fetch_array($rs_pending)) {?>
+<?php  
+while ($prows = mysql_fetch_array($rs_pending)) {?>
 <tr> 
           <td>#<? echo $prows['user_id']?></td>
            <td><? echo $prows['date']?></td>
-          <td><? echo $prows['user_name']?></td>
+          <td><? echo $prows['full_name']?></td>
           <td><? echo $prows['user_email']?></td>
-<td>
-<?php  
+<td><?php  
 $query=mysql_query("SELECT state FROM seswatch_states WHERE state_id='$prows[state_id]'");
 while($query1 = mysql_fetch_array($query))
 {
@@ -146,8 +200,8 @@ echo $query1['state'];
 
 <td>
 <?php
-$edituserlink="<a class=thickbox href=\"editusers.php?userid=".$prows['user_id']."\">Edit</a>";
-echo $edituserlink; 
+$edituserlink = "<a class=thickbox href=\"editusers.php?userid=".$prows['user_id']."&TB_iframe=true&height=500&width=700\">Edit</a>";
+echo $edituserlink;
 ?>
 </td>
 
@@ -166,7 +220,7 @@ $loginuserlink="<a target=\"_blank\" href=\"inspectlogin.php?userid=".$prows['us
 echo $loginuserlink; 
 ?>
 </td>
-
+</tr>
 
 
 
@@ -185,27 +239,35 @@ echo $loginuserlink;
 			</td>
         </tr>-->
         
-        <? } ?>
-        <tr> 
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-        </tr>
-        <tr> 
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-        </tr>
-      </table>
-	  <p>  <?php
+<? } ?>
+</tbody>
+</table>
+
+<div id="pager" class="column span-7" style="" >
+                        <form name="" action="" method="post">
+                                <table >
+                                <tr>
+                                        <td><img src='pager/icons/first.png' class='first'/></td>
+                                        <td><img src='pager/icons/prev.png' class='prev'/></td>
+                                        <td><input type='text' size='8' class='pagedisplay'/></td>
+                                        <td><img src='pager/icons/next.png' class='next'/></td>
+                                        <td><img src='pager/icons/last.png' class='last'/></td>
+                                        <td>
+                                                <select class='pagesize'>
+                                                        <option selected='selected'  value='10'>10</option>
+                                                        <option value='20'>20</option>
+                                                        <option value='30'>30</option>
+                                                        <option  value='40'>40</option>
+                                                </select>
+                                        </td>
+                                </tr>
+                                </table>
+                        </form>
+                </div>
+</div>
+
+
+	 <!-- <p>  <?php
 	  // generate paging here
 	  if ($total_pending > $page_limit)
 	  {
@@ -225,11 +287,11 @@ echo $loginuserlink;
         <input name="doRefresh" type="button" id="doRefresh" value="Refresh All" onClick="location.reload();">
 
         <input type=reset  value="Back"  class=buttonstyle onclick="javascript:window.location.href='admin.php';">
-      </p>   
+      </p>  --> 
 
   
     
-      <h3>Recent Registrations</h3>
+      <!--<h3>Recent Registrations</h3>
       <p>This shows to <strong>25 latest approved</strong> registrations and their 
         banned status.</p>
       <table width="99%" border="0" align="center" cellpadding="0" cellspacing="0">
@@ -272,7 +334,7 @@ echo $loginuserlink;
 			</td>
         </tr>
         <? } ?> 
- <!--        <tr> 
+     <tr> 
           <td>&nbsp;</td>
           <td>&nbsp;</td> 
           <td>&nbsp;</td>
@@ -289,17 +351,19 @@ echo $loginuserlink;
           <td>&nbsp;</td>
           <td>&nbsp;</td> 
           <td>&nbsp;</td>
-        </tr> -->
-      </table>
+        </tr> 
+      </table>-->
       
-      </table>
-      <p>&nbsp;</p>
-      <p>&nbsp;</p>
-      <p>&nbsp;</p></td>
-    <td width="12%">&nbsp;</td>
-  </tr>
-</table>
+</div>
+</div>
+</div>
+<div class="container bottom">
 <?php mysql_close($link);?>
+</div>
+<?php 
+   include("../footer.php");
+?>
 </body>
 </html>
+
 

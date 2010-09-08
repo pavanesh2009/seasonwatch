@@ -1,23 +1,10 @@
-<?php 
-include './includes/dbc.php';
-page_protect();
-?> 
+<? 
+   session_start();
+   $page_title="SeasonWatch";
+   include("main_includes.php");
+   	include_once("includes/dbc.php");
+?>
 
-<!--Displaying data into dropdown -->
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="./css/styles.css" rel="stylesheet" type="text/css">
-<link type="text/css" rel="stylesheet" href="./js/CalendarControl.css">
-<link type="text/css" rel="stylesheet" href="./js/jquery.autocomplete.css">
-<script language="javascript" src="./js/CalendarControl.js"></script>
-<script language="javascript" src="./js/jquery.js"></script>
-<link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print">
-<link rel="stylesheet" href="blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
-<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="js/jquery.validate.js"></script>
-<link rel="stylesheet" href="css/styles_new.css" type="text/css">
 
 <script type="text/javascript">
 function getXMLHTTP() { //fuction to return the xml http object
@@ -70,7 +57,7 @@ function getfamily(species_id1) {
 	//alert("primary_name=" + species_id1 );		
 	var strURL="findfamily.php?primary_name="+species_id1;
 	var req = getXMLHTTP();
-if (req) {   req.onreadystatechange = function() {
+if (req) {   req.onreadystatechange = function() {
 	if (req.readyState == 4) {
 	// only if "OK"
 	if (req.status == 200) {						
@@ -97,12 +84,12 @@ $(document).ready(function() {
 </script>
 
 <!-- ToolTip Script-->
-<link rel="stylesheet" href="tooltip/jquery.tooltip.css" />
+<!--<link rel="stylesheet" href="tooltip/jquery.tooltip.css" />
 <link rel="stylesheet" href="tooltip/demo/screen.css" />
 <script src="tooltip/lib/jquery.dimensions.js" type="text/javascript"></script>
 <script src="tooltip/jquery.tooltip.js" type="text/javascript"></script>
 <script src="tooltip/lib/jquery.bgiframe.js" type="text/javascript"></script>
-<script src="tooltip/chili-1.7.pack.js" type="text/javascript"></script>
+<script src="tooltip/chili-1.7.pack.js" type="text/javascript"></script>-->
 
 <script type="text/javascript">
 $(function() {
@@ -137,7 +124,10 @@ $('#tooltiptest a').tooltip({
 <?php
 $treeid=($_GET['treeid']);
 //AND location_master.tree_location_id=trees.tree_location_id  by Pavanesh on 9 june2010
-$tree_details = mysql_query("SELECT * FROM Species_master INNER JOIN (trees,user_tree_table,tree_measurement,location_master) ON user_tree_table.tree_id = trees.tree_id AND tree_measurement.tree_id =trees.tree_id AND trees.tree_id = '$treeid' AND trees.species_id = Species_master.species_id AND user_tree_table.user_id='$_SESSION[user_id]' AND tree_measurement.user_id='$_SESSION[user_id]'"); 
+$tree_details = mysql_query("SELECT * FROM species_master INNER JOIN (trees,user_tree_table,tree_measurement,location_master) 
+ON user_tree_table.tree_id = trees.tree_id AND tree_measurement.tree_id =trees.tree_id 
+AND trees.tree_id = '$treeid' AND trees.species_id = species_master.species_id 
+AND user_tree_table.user_id='$_SESSION[user_id]' AND tree_measurement.user_id='$_SESSION[user_id]' AND trees.tree_location_id = location_master.tree_location_id;"); 
 //print_r(mysql_fetch_array($tree_details));
 $one_tree_detail = mysql_fetch_array($tree_details);
 ?>
@@ -162,8 +152,8 @@ $one_tree_detail = mysql_fetch_array($tree_details);
 
 <tr>
 <td width="150">Primary Common Name</td>
-<td  width="150"><select name="species_primary_common_name" onChange="getspecies_scientific_name(this.value);getfamily(this.value);"><?php 
-$sql = mysql_query("SELECT species_id,species_primary_common_name, species_scientific_name FROM Species_master ORDER BY species_primary_common_name");
+<td  width="150"><select name="species_primary_common_name" onChange="getspecies_scientific_name(this.value);getfamily(this.value);"><?php 
+$sql = mysql_query("SELECT species_id,species_primary_common_name, species_scientific_name FROM species_master ORDER BY species_primary_common_name");
 while($row = mysql_fetch_array($sql))
 {
 if($row['species_primary_common_name']==$one_tree_detail['species_primary_common_name'])
@@ -188,8 +178,8 @@ value="<?echo $one_tree_detail['species_primary_common_name'];?>" style="width:2
 </tr>
 <tr style="">
 <td>Scientific Name</td>
-<td  width="150"><div id="species_scientific_namediv"><select disabled="disabled" name="species_scientific_name"><?php 
-$sql = mysql_query("SELECT species_id,species_scientific_name FROM Species_master");
+<td  width="150"><div id="species_scientific_namediv"><select disabled="disabled" name="species_scientific_name"><?php 
+$sql = mysql_query("SELECT species_id,species_scientific_name FROM species_master");
 
 while($row = mysql_fetch_array($sql))
 {
@@ -213,7 +203,7 @@ echo $data2;
 <td>Family</td>
 <td  width="150"><div id="familydiv"><select disabled="disabled" name="family" onChange="getspecies_primary_common_name(this.value);getfamily(this.value);">
 <?php 
-$sql = mysql_query("SELECT species_id,family FROM Species_master ");
+$sql = mysql_query("SELECT species_id,family FROM species_master ");
 while($row = mysql_fetch_array($sql))
 {
 if($row['family']==$one_tree_detail['family'])
@@ -369,11 +359,12 @@ else
 
 
 <!--<?php
+//echo $one_tree_detail[tree_location_id]."xx";
 $query = mysql_query("SELECT location_name FROM location_master WHERE tree_location_id='$one_tree_detail[tree_location_id]'");
 while($row = mysql_fetch_array($query)) 
 {
 $locationname = $row['location_name'];
-echo $locationname;
+//echo $locationname;
 }
 ?>-->
 

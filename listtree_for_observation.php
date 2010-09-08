@@ -1,45 +1,22 @@
-<?php 
-include './includes/dbc.php';
-page_protect();
-//print_r($HTTP_POST_VARS);
+<? 
+   session_start();
+   $page_title="SeasonWatch";
+   include("main_includes.php");
 ?>
- 
-<html lang="en">
-<head>
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
-<title>Add Observation</title>
-<?php
-include ("contribheader_head.php");
-?>
-</head>
+
+
+
 <body>
-<link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print">
-<link rel="stylesheet" href="blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
-<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="js/jquery.validate.js"></script>
-<link rel="stylesheet" href="css/styles_new.css" type="text/css">
-<script src="js/jquery-ui/ui/ui.datepicker.js" type="text/javascript"></script>
-<link type="text/css" rel="stylesheet" href="js/thickbox/thickbox.css"></link>
-<script language="javascript" src="js/thickbox/thickbox.js"></script>
-<script language="javascript" src="js/jquery.bgiframe.min.js"></script>  
-<script language="javascript" src="js/jquery.autocomplete.js"></script>
-<link type="text/css" rel="stylesheet" href="js/jquery.autocomplete.css"></link>
-<script charset="utf-8" type="text/javascript" src="js/jquery.emptyonclick.js"></script>
-<script type="text/javascript" src="js/jqModal.js"></script>
-<script type="text/javascript" src="js/jquery.autogrow.js"></script>
-<script type="text/javascript" src="js/jquery.corner.js"></script>
-<link type="text/css" href="css/styles_new.css" rel="stylesheet">
-<link type="text/css" href="css/sighting.css" rel="stylesheet">
-<script type="text/javascript" src="js/alerts/jquery.alerts.js"></script>
-<script src="js/pager/chili-1.8b.js" type="text/javascript"></script>
-<script src="js/pager/docs.js" type="text/javascript"></script> 
-<script src="js/jquery.validate.js" type="text/javascript"></script>
 
 <?php 
-include ("contribheader_body.php");
+include ("header.php");
 ?>
 <div class="container first_image" style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;">
+   <div id='tab-set'>   
+     <ul class='tabs'>
+        <li><a href='#x' class='selected'>add observation</a></li>
+    </ul>
+   </div>
 <table>
 <tbody>
 <tr>
@@ -58,6 +35,7 @@ include ("contribheader_body.php");
 <col style="width: 650px;"/>
 <col style="width: 750px;"/>
 <col style="width: 750px;"/>
+<col style="width: 750px;"/>
 </colgroup>
 <thead>
 <tr>
@@ -65,6 +43,7 @@ include ("contribheader_body.php");
 <th class="header">Species Primary Name</th>
 <th class="header">Species scientific name</th>
 <th class="header">Tree Nickname</th>
+<th class="header">Last Obervation</th>
 <th class="header">Observations</th>
 </tr>
 </thead>
@@ -73,15 +52,24 @@ include ("contribheader_body.php");
 <?php 
 $count=0;
 print "<tr class='delboxtr'>";
-$user_tree_table_settings = mysql_query("SELECT trees.tree_id, tree_nickname, species_scientific_name, species_primary_common_name, user_tree_table.user_tree_id FROM Species_master INNER JOIN (trees INNER JOIN user_tree_table ON trees.tree_id = user_tree_table.tree_id AND user_tree_table.user_id='$_SESSION[user_id]') ON Species_master.species_id = trees.species_id ORDER BY trees.tree_id");
+if ($_SESSION[group_role]=='coord')
+{
+	$user_tree_table_settings = mysql_query("SELECT trees.tree_id, tree_nickname, species_scientific_name, species_primary_common_name, user_tree_table.user_tree_id, user_tree_table.last_observation_date FROM species_master INNER JOIN (trees INNER JOIN user_tree_table ON trees.tree_id = user_tree_table.tree_id AND user_tree_table.user_id  IN (select users.user_id from users where users.group_id='$_SESSION[group_id]')) ON species_master.species_id = trees.species_id ORDER BY user_tree_table.last_observation_date ASC;");
+}
+else
+{
+		$user_tree_table_settings = mysql_query("SELECT trees.tree_id, tree_nickname, species_scientific_name, species_primary_common_name, user_tree_table.user_tree_id, user_tree_table.last_observation_date 
+		FROM species_master INNER JOIN (trees INNER JOIN user_tree_table ON trees.tree_id = user_tree_table.tree_id AND user_tree_table.user_id ='$_SESSION[user_id]') ON species_master.species_id = trees.species_id ORDER BY user_tree_table.last_observation_date ASC;");
+}	
 while ($row_settings = mysql_fetch_array($user_tree_table_settings)) 
 {
 print "<tr>";
 $count++;  
 print "<td style='width:220px'>".$count."</td>";
 print "<td>".$row_settings['species_primary_common_name']."</td>";
-print "<td>".$row_settings['species_scientific_name']. "</td>";
+print "<td><i>".$row_settings['species_scientific_name']. "</i></td>";
 print "<td style='width:220px'>".$row_settings['tree_nickname']."</td>";
+print "<td style='width:220px'>".$row_settings['last_observation_date']."</td>";
 $treeLinkBegin = "<a class=thickbox rel=gallery-plants href=\"userobservations.php?usertreeid=".$row_settings['user_tree_id']."&TB_iframe=true&height=500&width=700\">Add</a>";
 
 print "<td>$treeLinkBegin</td>";
@@ -94,7 +82,7 @@ print "</tr>";
 
 $trees_settings = mysql_query("SELECT tree_location FROM trees WHERE species_id='$species_ID'"); 
 
-$species_settings = mysql_query("SELECT species_scientific_name,species_primary_common_name,family FROM Species_master WHERE species_id='$species_ID'");
+$species_settings = mysql_query("SELECT species_scientific_name,species_primary_common_name,family FROM species_master WHERE species_id='$species_ID'");
 
 while ($row2_settings = mysql_fetch_array($species_settings)) 
 {
@@ -136,8 +124,8 @@ echo "</tbody></table>";
 <div class="container bottom">
 <?php mysql_close($link);?>
 </div>
+<?php 
+   include("footer.php");
+?>
 </body>
 </html>
-
-
-

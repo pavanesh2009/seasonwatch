@@ -1,24 +1,12 @@
-<?php 
-session_start(); 
+<? 
+   session_start();
+   $page_title="SeasonWatch";
+   include("main_includes.php");
+   
 ?>
-<html lang="en">
-<head>
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
-<title>SeasonWatch</title>
-<?php 
-include("header_head.php");
-?> 
-
-<link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print">
-<!-- <link rel="stylesheet" href="blueprint/ie.css" type="text/css" media="ie"> -->
-<link rel="stylesheet" href="blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
-<!--<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script> -->
-<script type="text/javascript" src="js/jquery.validate.js"></script>
-<link rel="stylesheet" href="css/styles_new.css" type="text/css"></link>
-<script type="text/javascript" src="http://maps.gstatic.com/intl/en_ALL/mapfiles/208a/maps2.api/main.js"></script>
-<script type="text/javascript" src="http://maps.google.com/maps?file=api&v=2&sensor=true&key=ABQIAAAAD7le_JdD5K74PSSUBnObehRsHoBIMdGoj7fYMR4ZU5G-PLcp5xQErnuU0KTDUg_ffjopaA7ztNS01g"></script>
-<script type="text/javascript" src="http://maps.gstatic.com/intl/en_ALL/mapfiles/208a/maps2.api/main.js"></script>
+<!--<script type="text/javascript" src="http://maps.gstatic.com/intl/en_ALL/mapfiles/208a/maps2.api/main.js"></script>-->
+<script type="text/javascript" src="http://maps.google.com/maps?file=api&v=2&sensor=true&key=ABQIAAAAj3UilF0JUxStHMEeZ6myXxRoA5S-3Z3wsvNu5GgYp0l_QSL5PRRjXmVlRmkaRo256GwWQtR1lEvVFQ"></script>
+<!--<script type="text/javascript" src="http://maps.gstatic.com/intl/en_ALL/mapfiles/208a/maps2.api/main.js"></script>
 <script type="text/javascript" charset="UTF-8" src="http://maps.gstatic.com/cat_js/intl/en_ALL/mapfiles/208a/maps2.api/%7Bmod_drag,mod_ctrapi,mod_scrwh,mod_kbrd,mod_api_gc%7D.js"></script>
 <script type="text/javascript" charset="UTF-8" src="http://maps.gstatic.com/intl/en_ALL/mapfiles/208a/maps2.api/mod_apiiw.js"/></script>
 <script type="text/javascript" charset="UTF-8" src="http://maps.gstatic.com/intl/en_ALL/mapfiles/208a/maps2.api/mod_exdom.js"/></script>
@@ -27,8 +15,75 @@ include("header_head.php");
 </style>
 <style>
 .error { color: red; }
-</style> 
+</style> -->
 
+<!-- Magic script to make thickbox html that comes in through ajax work. meaning the click to get larger image isn't there
+when the page loads as it comes in subsequently through getSpecies function call. this script makes thickbox work with this too! -->
+<script type="text/javascript">
+function tb_init(){
+	$(document).click(function(e){
+	e = e || window.event;
+	var el = e.target || e.scrElement || null;
+	if(el && el.parentNode && !el.className || !/thickbox/.test(el.className))
+	el = el.parentNode;
+	if(!el || !el.className || !/thickbox/.test(el.className))
+	return;
+	var t = el.title || el.name || null;
+	var a = el.href || el.alt;
+	var g = el.rel || false;
+	tb_show(t,a,g);
+	el.blur();
+	return false;
+	});
+};
+</script>
+
+<script type="text/javascript">
+function getXMLHTTP() { //fuction to return the xml http object
+		var xmlhttp=false;	
+		try{
+			xmlhttp=new XMLHttpRequest();
+		}
+		catch(e)	{		
+			try{			
+				xmlhttp= new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			catch(e){
+				try{
+				xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+				}
+				catch(e1){
+					xmlhttp=false;
+				}
+			}
+		}
+		 	
+		return xmlhttp;
+    }
+
+	<!-- script for accesing session info through AJAX -->
+function getSpecies(speciesid) {
+//alert('in getlocname');
+	var req = getXMLHTTP();
+if (req) {
+   req.onreadystatechange = function() {
+	if (req.readyState == 4) {
+	// only if "OK"
+	if (req.status == 200) {						
+	document.getElementById('tree_gallery').innerHTML=req.responseText;						
+	}
+else {
+	alert("There was a problem while using XMLHTTP:\n" + req.statusText);
+   	}
+		}				
+		}			
+		req.open("GET", "getspecies.php?q="+speciesid, true);
+		req.send(null);
+}
+}
+
+
+</script>
 		
 <script type="text/javascript">
 			google.load("jquery", '1.2.6');
@@ -37,13 +92,19 @@ include("header_head.php");
 		
 
 <script type="text/javascript" charset="utf-8">
-$(function(){
+$(document).ready(function(){
 			var map = new GMap2(document.getElementById('map'));
     		var burnsvilleMN = new GLatLng(20.920397,78.222656);
 	   	map.setCenter(burnsvilleMN, 3);
+	   	//Added by Pavanesh The setCenter() method requires a GLatLng coordinate and a zoom level and 
+	   	//this method must  be sent before any other operations are performed on the map, 
+	   	//including setting any other attributes of the map itself. 
+		
 			var bounds = new GLatLngBounds();
 		   var geo = new GClientGeocoder(); 
 		   map.setUIToDefault();
+		   // set default view settalite type added by Pavanesh
+		 // map.setMapType(G_SATELLITE_MAP);
 				
 var reasons=[];
 reasons[G_GEO_SUCCESS]            = "Success";
@@ -121,7 +182,8 @@ showMessage(marker, location.name);
 .appendTo("#list");
 					
 GEvent.addListener(marker, "click", function(){
-showMessage(this, location.name);
+showMessage(this, "Species name: "+location.species_name+"<br/>User: "+location.full_name);
+//map.panTo(marker.getLatLng());              //onclick marker centralised map added by pavanesh
 });
 }
 				
@@ -136,12 +198,15 @@ function zoomToBounds() {
 $("#message").appendTo( map.getPane(G_MAP_FLOAT_SHADOW_PANE) );
 				
 function showMessage(marker, text){
+map.panTo(marker.getPoint()); //added by Pavanesh
 var markerOffset = map.fromLatLngToDivPixel(marker.getPoint());
 $("#message").hide().fadeIn('slow')
 .css({ top:markerOffset.y, left:markerOffset.x })
 .html(text);
 }
+
 });
+
 </script>
 
 
@@ -154,10 +219,10 @@ $('#list').hide();
 var toggled = false;
 $('#map-show-hide').click(function() {
 $('#map').toggle();
-$('#list').toggle();
+<!--$('#list').toggle();-->
 
-if( toggled==false ) { $('#map-show-hide').html("All&nbsp;Registered&nbsp;Trees&nbsp;<span style='color:#d95c15'>(-)</span>"); toggled = true; } else {
-$('#map-show-hide').html("All&nbsp;Registered&nbsp;Trees&nbsp;<span style='color:#d95c15'>(+)</span>");
+if( toggled==false ) { $('#map-show-hide').html("All&nbsp;Trees&nbsp;<span style='color:#d95c15'>(-)</span>"); toggled = true; } else {
+$('#map-show-hide').html("All&nbsp;Trees&nbsp;<span style='color:#d95c15'>(+)</span>");
  toggled = false;
  }
 });
@@ -189,27 +254,17 @@ input, select { width:150px; }
 button { float:right; }
 div.error { color:red; font-weight:bold; }
 </style>
-
 </head>
 
-<body>
-<?php 
-include("header_body.php");
+<body onLoad="getSpecies('1000');">
+<? 
+	include("header.php");
 ?>
+<div class='container first_image'>
 
-<div class="container first_image" style=" background-color:#fffff9; background-image: url('images/gradientbg.png'); background-repeat: repeat-x; background-position: bottom left; width:950px; padding-bottom:5px;"><!-- style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;"> -->
-<table>
-<tbody>
-<tr>
-<td></td>
-</tr>
-</tbody>
-</table>
-<div></div>
-
-<div class="map-show-link" style="margin-top: -10px;">
+<div class="map-show-link" style="margin-top: -4px;">
 <a id="map-show-hide" href="#">
-All Registered Trees
+All Trees
 <span style="color: rgb(217, 92, 30);">(+)</span>
 </a>
 <div id="map" style="margin-left: 8px; position: relative; background-color: rgb(229, 227, 223); display: block;">
@@ -231,43 +286,84 @@ All Registered Trees
 <table style="width: 930px; margin-left: auto; margin-right: auto;">
 <tbody>
 <tr>
-<td colspan="2">
-<hr/>
-</td>
+	<td colspan="1">
+	<hr/>
+	</td>
 </tr>
 <tr>
-<td class="cms" style="border-right: 1px solid rgb(217, 92, 21); width: 45%;">
-<h3>About SeasonWatch</h3>
-<p>
-<span style="">The affinities of all the beings of the same class have sometimes been represented by a great tree... As buds give rise by growth to fresh buds, and these if vigorous, branch out and overtop on all sides many a feebler branch, so by generation I believe it has been with the great Tree of Life, which fills with its dead and broken branches the crust of the earth, and covers the surface with its ever branching and beautiful ramifications."
-Charles Darwin, 1859
-</p>
-</td>
-<td class="cms" style="width: 45%; padding-left: 15px;">
-<h3>About SeasonWatch</h3>
-<p>
-<span style="">"The affinities of all the beings of the same class have sometimes been represented by a great tree... As buds give rise by growth to fresh buds, and these if vigorous, branch out and overtop on all sides many a feebler branch, so by generation I believe it has been with the great Tree of Life, which fills with its dead and broken branches the crust of the earth, and covers the surface with its ever branching and beautiful ramifications."
-Charles Darwin, 1859
-</td>
+	<td>
+	<table>
+	<tr>
+		<td class="cms" style="border-right: 1px solid rgb(217, 92, 21); width: 45%;">
+		<h3>About SeasonWatch</h3>
+		<?php 
+		$count_all_trees = mysql_query("SELECT count(tree_id) FROM trees");
+		$row_all_trees = mysql_fetch_array($count_all_trees);
+		$count_all_species = mysql_query("SELECT count(DISTINCT species_master.species_id) FROM trees INNER JOIN species_master ON trees.species_id = species_master.species_id");
+		$row_all_species = mysql_fetch_array($count_all_species);
+		?>
+		<?php
+			 $page_id=21;
+			 $page=mw_get_page($page_id);
+		?>
+			 <? echo nl2br($page[1]); ?>
+			 <br/>At the moment, <b><?php echo $row_all_trees['count(tree_id)']; ?></b> trees of <b><?php echo $row_all_species['count(DISTINCT species_master.species_id)']; ?></b> different species are being monitored by volunteers. <a href="http://seasonwatch.in/beta/content.php?page_id=7">Read more: What is SeasonWatch all about?</a>
+		</td>
+		<td class="cms" style="width: 45%; padding-left: 15px;">
+		<h3>Tree Gallery</h3>
+		<p id="tree_gallery">
+		</p>
+		</td>
+	</tr>
+	</table>
+	</td>
 </tr>
-
-
 <tr>
-<td colspan="2">
-<hr/>
-</td>
+	<td colspan="1">
+	<hr/>
+	</td>
 </tr>
 <tr>
-<td class="cms" colspan="2">
-<h3>this is header 3</h3>
-<p>
-<span class="ver12blkht">A tree is a perennial woody plant. It is most often defined as a woody plant that has many secondary branches supported clear of the ground on a single main stem or trunk with clear apical dominance.[1] A minimum height specification at maturity is cited by some authors, varying from 3 m[2] to 6 m;[3] some authors set a minimum of 10 cm trunk diameter (30 cm girth).[4] Woody plants that do not meet these definitions by having multiple stems and/or small size, are called shrubs."</span>
-<span class="ver12blkht">A tree is a perennial woody plant. It is most often defined as a woody plant that has many secondary branches supported clear of the ground on a single main stem or trunk with clear apical dominance.[1] A minimum height specification at maturity is cited by some authors, varying from 3 m[2] to 6 m;[3] some authors set a minimum of 10 cm trunk diameter (30 cm girth).[4] Woody plants that do not meet these definitions by having multiple stems and/or small size, are called shrubs
-</p>
-</td>
+	<td>
+	<table>
+	<tr>
+		<td class="cms" style="border-right: 1px solid rgb(217, 92, 21); ">
+		<h3>Who can join?</h3>
+		<p>
+		<span style="">
+		<?php
+			 $page_id=28;
+			 $page=mw_get_page($page_id);
+		?>
+			 <? echo nl2br($page[1]); ?>
+		</td>
+		<td class="cms"  style="border-right: 1px solid rgb(217, 92, 21);padding-left:15px; ">
+		<h3>SeasonWatch for schools</h3>
+		<p>
+		<span class="ver12blkht">
+		<?php
+			 $page_id=26;
+			 $page=mw_get_page($page_id);
+		?>
+			 <? echo nl2br($page[1]); ?>
+		</span>
+		</p>
+		</td>
+		<td style="padding-left:15px;">
+		<h3>SeasonWatch updates</h3>
+			<table>
+			<tr>
+				<td><? include("get_popular_species.php"); ?></td>
+			</tr>
+			</table>
+		</td>
+	</tr>
+	</table>
+	</td>
 </tr>
 </tbody>
 </table>
+
 
 <!-- <script type="text/javascript">
 $(document).ready(function() {
@@ -283,18 +379,15 @@ $(document).ready(function() {
 });  
 </script> -->
 
+     
 </div>
 </div>
 </div>
-<div class="container bottom"  style="background-image:url('images/pagebottomstrip.png');
- background-repeat:no-repeat;
- width:990px;
- padding-top:30px;
- background-color:#fff;
- margin-left:auto;
- margin-right:auto;">
+<div class="container bottom">
+<?php mysql_close($link);?>
 </div>
+<?php 
+   include("footer.php");
+?>
 </body>
 </html>
-
-

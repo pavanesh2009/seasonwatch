@@ -1,30 +1,20 @@
-<?php 
-include './includes/dbc.php';
-page_protect();
-?> 
+<? 
+   session_start();
+   $page_title="SeasonWatch";
+   include("main_includes.php");
+?>
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $("#obdate").datepicker({minDate: -120, maxDate: '0M +0D', dateFormat: 'yy-mm-dd'});
+  });
+  </script>
+  
 
-<html>
-<head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>Weekly Observation</title> 
-<link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print">
-<link rel="stylesheet" href="blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
-<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="js/jquery.validate.js"></script>
-<link rel="stylesheet" href="css/styles_new.css" type="text/css"></link>
-<link type="text/css" rel="stylesheet" href="js/thickbox/thickbox.css"></link>
-<script language="javascript" src="js/thickbox/thickbox.js"></script>
-<script type='text/javascript' src='js/jquery.autocomplete.js'></script>
-<link rel="stylesheet" type="text/css" href="js/jquery.autocomplete.css" />
 
 <!--for tooltip--> 
-<link rel="stylesheet" href="tooltip/jquery.tooltip.css" />
-<link rel="stylesheet" href="tooltip/demo/screen.css" />
-<script src="tooltip/lib/jquery.dimensions.js" type="text/javascript"></script>
-<script src="tooltip/jquery.tooltip.js" type="text/javascript"></script>
-<script src="tooltip/lib/jquery.bgiframe.js" type="text/javascript"></script>
-<script src="tooltip/chili-1.7.pack.js" type="text/javascript"></script>
 <script type="text/javascript">
 $(function() { 
 $('#tooltiptest a').tooltip({
@@ -37,14 +27,6 @@ $('#tooltiptest a').tooltip({
 }); 
 </script> 
 
-<!--for date--> 
-<link type="text/css" href="js/calendar/themes/blitzer/ui.datepicker.css" rel="stylesheet"></link>
-<script language="javascript" src="js/calendar/ui/ui.datepicker.js"></script>
-<script type="text/javascript">
-$(function() { 
-$("#obdate").datepicker({minDate: -120, maxDate: '0M +0D', dateFormat: 'yy-mm-dd'});
-});
-</script> 
 
 <!--for emptyonclick-->
 <script type="text/javascript" src="js/jquery.emptyonclick.js"></script>
@@ -60,55 +42,55 @@ function enablecount(name)
 {
 //alert(name);
 if(name == 'is_leaf_fresh'){
-document.getElementById('freshfmf').style.display='block';
-//document.species1.freshleaf_count[1].disabled=false;
-//document.species1.freshleaf_count[0].disabled=false;
-//document.species1.freshleaf_count[2].disabled=false; 
+//document.getElementById('freshfmf').style.display='block';
+document.species1.freshleaf_count[1].disabled=false;
+document.species1.freshleaf_count[0].disabled=false;
+document.species1.freshleaf_count[2].disabled=false; 
 }
 
 if(name == 'is_leaf_mature'){ 
-document.getElementById('maturefmf').style.display='block';
-//document.species1.matureleaf_count[1].disabled=false;
-//document.species1.matureleaf_count[0].disabled=false;
-//document.species1.matureleaf_count[2].disabled=false; 
+//document.getElementById('maturefmf').style.display='block';
+document.species1.matureleaf_count[1].disabled=false;
+document.species1.matureleaf_count[0].disabled=false;
+document.species1.matureleaf_count[2].disabled=false; 
 }
  
 if(name == 'is_flower_bud'){
-document.getElementById('budfmf').style.display='block';
-//document.species1.bud_count[1].disabled=false;
-//document.species1.bud_count[0].disabled=false;
-//document.species1.bud_count[2].disabled=false; 
+//document.getElementById('budfmf').style.display='block';
+document.species1.bud_count[1].disabled=false;
+document.species1.bud_count[0].disabled=false;
+document.species1.bud_count[2].disabled=false; 
 }
 
 if(name == 'is_flower_open'){ 
-document.getElementById('flowerfmf').style.display='block';
-//document.species1.open_flower_count[1].disabled=false;
-//document.species1.open_flower_count[0].disabled=false;
-//document.species1.open_flower_count[2].disabled=false; 
+//document.getElementById('flowerfmf').style.display='block';
+document.species1.open_flower_count[1].disabled=false;
+document.species1.open_flower_count[0].disabled=false;
+document.species1.open_flower_count[2].disabled=false; 
 }
 
 if(name == 'is_fruit_unripe'){
-document.getElementById('unripefmf').style.display='block';
-//document.species1.fruit_unripe_count[1].disabled=false;
-//document.species1.fruit_unripe_count[0].disabled=false;
-//document.species1.fruit_unripe_count[2].disabled=false;
+//document.getElementById('unripefmf').style.display='block';
+document.species1.fruit_unripe_count[1].disabled=false;
+document.species1.fruit_unripe_count[0].disabled=false;
+document.species1.fruit_unripe_count[2].disabled=false;
 } 
 
 if(name == 'is_fruit_ripe'){
-document.getElementById('ripefmf').style.display='block';
-//document.species1.fruit_ripe_count[1].disabled=false;
-//document.species1.fruit_ripe_count[0].disabled=false;
-//document.species1.fruit_ripe_count[2].disabled=false;
+//document.getElementById('ripefmf').style.display='block';
+document.species1.fruit_ripe_count[1].disabled=false;
+document.species1.fruit_ripe_count[0].disabled=false;
+document.species1.fruit_ripe_count[2].disabled=false;
 }
 }
 
 function disablecount(name)
 {
 if(name == 'is_leaf_fresh'){
-document.getElementById('freshfmf').style.display='none';
-//document.species1.freshleaf_count[1].disabled=true;
-//document.species1.freshleaf_count[0].disabled=true;
-//document.species1.freshleaf_count[2].disabled=true;
+//document.getElementById('freshfmf').style.display='none';
+document.species1.freshleaf_count[1].disabled=true;
+document.species1.freshleaf_count[0].disabled=true;
+document.species1.freshleaf_count[2].disabled=true;
 
 document.species1.freshleaf_count[1].checked=false;
 document.species1.freshleaf_count[0].checked=false;
@@ -116,10 +98,10 @@ document.species1.freshleaf_count[2].checked=false;
 } 
 
 if(name == 'is_leaf_mature'){
-document.getElementById('maturefmf').style.display='none';
-//document.species1.matureleaf_count[1].disabled=true;
-//document.species1.matureleaf_count[0].disabled=true;
-//document.species1.matureleaf_count[2].disabled=true;
+//document.getElementById('maturefmf').style.display='none';
+document.species1.matureleaf_count[1].disabled=true;
+document.species1.matureleaf_count[0].disabled=true;
+document.species1.matureleaf_count[2].disabled=true;
 
 document.species1.matureleaf_count[1].checked=false;
 document.species1.matureleaf_count[0].checked=false;
@@ -127,10 +109,10 @@ document.species1.matureleaf_count[2].checked=false;
 }
 
 if(name == 'is_flower_open'){
-document.getElementById('flowerfmf').style.display='none';
-//document.species1.open_flower_count[1].disabled=true;
-//document.species1.open_flower_count[0].disabled=true;
-//document.species1.open_flower_count[2].disabled=true;
+//document.getElementById('flowerfmf').style.display='none';
+document.species1.open_flower_count[1].disabled=true;
+document.species1.open_flower_count[0].disabled=true;
+document.species1.open_flower_count[2].disabled=true;
 
 document.species1.open_flower_count[1].checked=false;
 document.species1.open_flower_count[0].checked=false;
@@ -138,10 +120,10 @@ document.species1.open_flower_count[2].checked=false;
 }
 
 if(name == 'is_flower_bud'){ 
-document.getElementById('budfmf').style.display='none';
-//document.species1.bud_count[1].disabled=true;
-//document.species1.bud_count[0].disabled=true;
-//document.species1.bud_count[2].disabled=true;
+//document.getElementById('budfmf').style.display='none';
+document.species1.bud_count[1].disabled=true;
+document.species1.bud_count[0].disabled=true;
+document.species1.bud_count[2].disabled=true;
 
 document.species1.bud_count[1].checked=false;
 document.species1.bud_count[0].checked=false;
@@ -149,10 +131,10 @@ document.species1.bud_count[2].checked=false;
 }
  
 if(name == 'is_fruit_unripe'){
-document.getElementById('unripefmf').style.display='none';
-//document.species1.fruit_unripe_count[1].disabled=true;
-//document.species1.fruit_unripe_count[0].disabled=true;
-//document.species1.fruit_unripe_count[2].disabled=true; 
+//document.getElementById('unripefmf').style.display='none';
+document.species1.fruit_unripe_count[1].disabled=true;
+document.species1.fruit_unripe_count[0].disabled=true;
+document.species1.fruit_unripe_count[2].disabled=true; 
  
 document.species1.fruit_unripe_count[1].checked=false;
 document.species1.fruit_unripe_count[0].checked=false;
@@ -160,10 +142,10 @@ document.species1.fruit_unripe_count[2].checked=false;
 }
  
 if(name == 'is_fruit_ripe'){
-document.getElementById('ripefmf').style.display='none';
-//document.species1.fruit_ripe_count[1].disabled=true;
-//document.species1.fruit_ripe_count[0].disabled=true;
-//document.species1.fruit_ripe_count[2].disabled=true; 
+//document.getElementById('ripefmf').style.display='none';
+document.species1.fruit_ripe_count[1].disabled=true;
+document.species1.fruit_ripe_count[0].disabled=true;
+document.species1.fruit_ripe_count[2].disabled=true; 
 
 document.species1.fruit_ripe_count[1].checked=false;
 document.species1.fruit_ripe_count[0].checked=false;
@@ -372,7 +354,7 @@ var numericExpression = /^[0-9]+$/;
 return true; 
 }
 </script>
-</head>
+
 
 <body>
 <!-- div used to be of class = container first_image. but since this required a different width changed. haven't yet made a class for this-->
@@ -409,7 +391,10 @@ return true;
 <td>
 <div class="demo">
 <input id="obdate" name="obdate"  type="text"/>
+&nbsp;<font color="#d95c15">Choose from pop-up or enter manually, eg. 2010-05-24</font>
 </div>
+
+
 <br/>
 </td>
 </tr>
@@ -424,10 +409,10 @@ return true;
 &nbsp;
 <input type="radio" class="radio" name="is_leaf_fresh" value="2" onClick = "disablecount(this.name);"/> Don't know
 <br/><br/>
-<div id="freshfmf" style="display:none;">
-<input type="radio" class="radio" name="freshleaf_count"  value="Few" /> Few
-<input type="radio" class="radio" name="freshleaf_count"  value="Many" /> Many
-<input type="radio" class="radio" name="freshleaf_count"  value="Full" /> Full
+<div id="freshfmf" name="freshfmf">
+<input type="radio" class="radio" name="freshleaf_count"  value="Few" disabled /> Few
+<input type="radio" class="radio" name="freshleaf_count"  value="Many" disabled /> Many
+<input type="radio" class="radio" name="freshleaf_count"  value="Full" disabled /> Full
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#d95c15">Optional</font>
 <div1 id="tooltiptest">
 <a title="Please opt for “Few” if you find that approximately 1-30% of the canopy/crown-cover is covered by these; “Many” if approximately 30-60% & “Full” if 60-100% of the branches are covered by these. " href="#">(?)</a>
@@ -446,10 +431,10 @@ return true;
 &nbsp;
 <input type="radio" class="radio" name="is_leaf_mature" value="2" onClick = "disablecount(this.name);" /> Don't know
 <br/><br/>
-<div id="maturefmf" style="display:none;">
-<input type="radio" class="radio" name="matureleaf_count" value="Few" /> Few
-<input type="radio" class="radio" name="matureleaf_count" value="Many" /> Many
-<input type="radio" class="radio" name="matureleaf_count" value="Full" /> Full
+<div id="maturefmf">
+<input type="radio" class="radio" name="matureleaf_count" value="Few" disabled /> Few
+<input type="radio" class="radio" name="matureleaf_count" value="Many" disabled /> Many
+<input type="radio" class="radio" name="matureleaf_count" value="Full" disabled /> Full
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#d95c15">Optional</font>
 <div1 id="tooltiptest">
 <a title="Please opt for “Few” if you find that approximately 1-30% of the canopy/crown-cover is covered by these; “Many” if approximately 30-60% & “Full” if 60-100% of the branches are covered by these. " href="#">(?)</a>
@@ -469,10 +454,10 @@ return true;
 &nbsp;
 <input type="radio" class="radio" name="is_flower_bud" value="2"  onClick = "disablecount(this.name);"/> Don't know
 <br/><br/>
-<div id="budfmf" style="display:none;">
-<input type="radio" class="radio" name="bud_count"  value="Few" /> Few
-<input type="radio" class="radio" name="bud_count"  value="Many" /> Many
-<input type="radio" class="radio" name="bud_count"  value="Full" /> Full
+<div id="budfmf">
+<input type="radio" class="radio" name="bud_count"  value="Few" disabled /> Few
+<input type="radio" class="radio" name="bud_count"  value="Many" disabled /> Many
+<input type="radio" class="radio" name="bud_count"  value="Full" disabled /> Full
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#d95c15">Optional</font>
 <div1 id="tooltiptest">
 <a title="Please opt for “Few” if you find that approximately 1-30% of the canopy/crown-cover is covered by these; “Many” if approximately 30-60% & “Full” if 60-100% of the branches are covered by these. " href="#">(?)</a>
@@ -491,10 +476,10 @@ return true;
 &nbsp;
 <input type="radio" class="radio" name="is_flower_open" value="2"  onClick = "disablecount(this.name);"/> Don't know
 <br/><br/>
-<div id="flowerfmf" style="display:none;">
-<input type="radio" class="radio" name="open_flower_count" value="Few" /> Few
-<input type="radio" class="radio" name="open_flower_count" value="Many" /> Many
-<input type="radio" class="radio" name="open_flower_count" value="Full" /> Full
+<div id="flowerfmf">
+<input type="radio" class="radio" name="open_flower_count" value="Few" disabled /> Few
+<input type="radio" class="radio" name="open_flower_count" value="Many" disabled /> Many
+<input type="radio" class="radio" name="open_flower_count" value="Full" disabled /> Full
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#d95c15">Optional</font>
 <div1 id="tooltiptest">
 <a title="Please opt for “Few” if you find that approximately 1-30% of the canopy/crown-cover is covered by these; “Many” if approximately 30-60% & “Full” if 60-100% of the branches are covered by these. " href="#">(?)</a>
@@ -514,10 +499,10 @@ return true;
 &nbsp;
 <input type="radio" class="radio" name="is_fruit_unripe" value="2"  onClick = "disablecount(this.name);" /> Don't know
 <br/><br/>
-<div id="unripefmf" style="display:none;">
-<input type="radio" class="radio" name="fruit_unripe_count" value="Few" /> Few
-<input type="radio" class="radio" name="fruit_unripe_count" value="Many" /> Many
-<input type="radio" class="radio" name="fruit_unripe_count" value="Full" /> Full
+<div id="unripefmf">
+<input type="radio" class="radio" name="fruit_unripe_count" value="Few" disabled /> Few
+<input type="radio" class="radio" name="fruit_unripe_count" value="Many" disabled /> Many
+<input type="radio" class="radio" name="fruit_unripe_count" value="Full" disabled /> Full
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#d95c15">Optional</font>
 <div1 id="tooltiptest">
 <a title="Please opt for “Few” if you find that approximately 1-30% of the canopy/crown-cover is covered by these; “Many” if approximately 30-60% & “Full” if 60-100% of the branches are covered by these. " href="#">(?)</a>
@@ -537,10 +522,10 @@ return true;
 &nbsp;
 <input type="radio" class="radio" name="is_fruit_ripe" value="2" onClick = "disablecount(this.name);" /> Don't know
 <br/><br/>
-<div id="ripefmf" style="display:none;">
-<input type="radio" class="radio" name="fruit_ripe_count"  value="Few" /> Few
-<input type="radio" class="radio" name="fruit_ripe_count"  value="Many" /> Many
-<input type="radio" class="radio" name="fruit_ripe_count"  value="Full" /> Full
+<div id="ripefmf">
+<input type="radio" class="radio" name="fruit_ripe_count"  value="Few" disabled /> Few
+<input type="radio" class="radio" name="fruit_ripe_count"  value="Many" disabled /> Many
+<input type="radio" class="radio" name="fruit_ripe_count"  value="Full" disabled /> Full
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#d95c15">Optional</font>
 <div1 id="tooltiptest">
 <a title="Please opt for “Few” if you find that approximately 1-30% of the canopy/crown-cover is covered by these; “Many” if approximately 30-60% & “Full” if 60-100% of the branches are covered by these. " href="#">(?)</a>
@@ -595,7 +580,7 @@ return true;
 
 <tr> 
 <td align=right>Animal /Bird /Insect Description</td>
-<td><textarea id="animal_desc" name="animal_desc" cols="40" rows="5"  value='Enter your comments here'  class="emptyonclick">
+<td><textarea id="animal_desc" name="animal_desc" cols="40" rows="5"  value='Enter your comments here'  class="emptyonclick"  onClick="document.getElementById('animal_desc').innerHTML='';">
 Enter your comments here
 </textarea><div1 id="tooltiptest">
 <a title="Please also look for any birds, insects or other creatures (including humans) that might be using the tree in any way (e.g. drinking nectar, eating fruits, collecting leaves and so on) at the time of observation and record these in the database." href="#">(?)</a>
@@ -663,6 +648,5 @@ http://www.imd.ernet.in/section/nhac/dynamic/current.htm)
 </form>
 </div>
 </div>
-<?php mysql_close($link);?>
 </body>
 </html>

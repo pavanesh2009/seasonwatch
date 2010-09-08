@@ -1,20 +1,10 @@
-<?php
-include './includes/dbc.php'; 
-page_protect();
+<? 
+   session_start();
+   $page_title="SeasonWatch";
+   include("main_includes.php");
+   //include_once("functions.php");
 ?>
 
-<html>
-<head>
-<title>Contributor Homepage </title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<!-- <link rel='stylesheet' type='text/css' href='css/fullcalendar.css' /> -->
-<!-- <script type='text/javascript' src='js/jquery/jquery.js'></script> -->
-<link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection"></link>
-<link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print"></link>
-<link rel="stylesheet" href="blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection"></link>
-<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="js/jquery.validate.js"></script>
-<link rel="stylesheet" href="css/styles_new.css" type="text/css"></link>
 
 <script type="text/javascript">
 function validatelist(thisform)
@@ -27,167 +17,19 @@ return false;
 return true;
 }
 </script>
-
-<?php
-include ("contribheader_head.php");
-?>
-
-<!-- GMAP scripts  
-<script type="text/javascript" src="http://maps.gstatic.com/intl/en_ALL/mapfiles/208a/maps2.api/main.js"></script>
-<script type="text/javascript" src="http://maps.google.com/maps?file=api&v=2&sensor=true&key=ABQIAAAAD7le_JdD5K74PSSUBnObehRsHoBIMdGoj7fYMR4ZU5G-PLcp5xQErnuU0KTDUg_ffjopaA7ztNS01g"></script>
-<script type="text/javascript" src="http://maps.gstatic.com/intl/en_ALL/mapfiles/208a/maps2.api/main.js"></script>
-<script type="text/javascript" charset="UTF-8" src="http://maps.gstatic.com/cat_js/intl/en_ALL/mapfiles/208a/maps2.api/%7Bmod_drag,mod_ctrapi,mod_scrwh,mod_kbrd,mod_api_gc%7D.js"></script>
-<script type="text/javascript" charset="UTF-8" src="http://maps.gstatic.com/intl/en_ALL/mapfiles/208a/maps2.api/mod_apiiw.js"/></script>
-<script type="text/javascript" charset="UTF-8" src="http://maps.gstatic.com/intl/en_ALL/mapfiles/208a/maps2.api/mod_exdom.js"/></script>
-<style type="text/css">
-@media print{.gmnoprint{display:none}}@media screen{.gmnoscreen{display:none}}
-</style>
-<style>
-.error { color: red; }
-</style> 
-
-		
-<script type="text/javascript">
-			google.load("jquery", '1.2.6');
-			google.load("maps", "2.x");
-</script>
-		
-
-<script type="text/javascript" charset="utf-8">
-$(function(){
-			var map = new GMap2(document.getElementById('map'));
-    		var burnsvilleMN = new GLatLng(20.920397,78.222656);
-	   	map.setCenter(burnsvilleMN, 3);
-			var bounds = new GLatLngBounds();
-		   var geo = new GClientGeocoder(); 
-		   map.setUIToDefault();
-				
-var reasons=[];
-reasons[G_GEO_SUCCESS]            = "Success";
-reasons[G_GEO_MISSING_ADDRESS]    = "Missing Address";
-reasons[G_GEO_UNKNOWN_ADDRESS]    = "Unknown Address.";
-reasons[G_GEO_UNAVAILABLE_ADDRESS]= "Unavailable Address";
-reasons[G_GEO_BAD_KEY]            = "Bad API Key";
-reasons[G_GEO_TOO_MANY_QUERIES]   = "Too Many Queries";
-reasons[G_GEO_SERVER_ERROR]       = "Server error";
-				
-
-// initial load points
-
-	$.getJSON("contribmap-service.php?action=listpoints", function(json) {
-	if (json.Locations.length > 0) {
-	for (i=0; i<json.Locations.length; i++) {
-	var location = json.Locations[i];
-	addLocation(location);
-	}
-zoomToBounds();
-}
-});
-				
-$("#add-point").submit(function(){
-geoEncode();
-return false;
-});
-				
-function savePoint(geocode) {
-var data = $("#add-point :input").serializeArray();
-data[data.length] = { name: "lng", value: geocode[0] };
-data[data.length] = { name: "lat", value: geocode[1] };
-$.post($("#add-point").attr('action'), data, function(json){
-$("#add-point .error").fadeOut();
-if (json.status == "fail") {
-$("#add-point .error").html(json.message).fadeIn();
-}
-if (json.status == "success") {
-							$("#add-point :input[name!=action]").val("");
-							var location = json.data;
-							addLocation(location);
-							zoomToBounds();
-						}
-					}, "json");
-				}
-				
-function geoEncode() {
-	var address = $("#add-point input[name=address]").val();
-	geo.getLocations(address, function (result){
-	if (result.Status.code == G_GEO_SUCCESS) {
-	geocode = result.Placemark[0].Point.coordinates;
-	savePoint(geocode);
-	} else {
-		var reason="Code "+result.Status.code;
-	if (reasons[result.Status.code]) {
-	reason = reasons[result.Status.code]
-							} 
-							$("#add-point .error").html(reason).fadeIn();
-							geocode = false;
-						}
-					});
-				}
-				
-				function addLocation(location) {
-					var point = new GLatLng(location.lat, location.lng);		
-					var marker = new GMarker(point);
-					map.addOverlay(marker);
-					bounds.extend(marker.getPoint());
-					
-$("<li />")
-.html(location.name) 
-.click(function(){
-showMessage(marker, location.name);
-})
-.appendTo("#list");
-					
-GEvent.addListener(marker, "click", function(){
-showMessage(this, location.name);
-});
-}
-				
-function zoomToBounds() {
-	map.setCenter(bounds.getCenter());
-    
-    //for zoom india locations 	
-	//map.setZoom(map.getBoundsZoomLevel(bounds)-1);
-	map.setZoom(map.getBoundsZoomLevel(bounds));
-	}
-	
-$("#message").appendTo( map.getPane(G_MAP_FLOAT_SHADOW_PANE) );
-				
-function showMessage(marker, text){
-var markerOffset = map.fromLatLngToDivPixel(marker.getPoint());
-$("#message").hide().fadeIn()
-.css({ top:markerOffset.y, left:markerOffset.x })
-.html(text);
-}
-});
-</script>
-
-<style media="screen" type="text/css"> 
-#map { float:left; width:700px; height:350px;margin:0;padding:0; border: solid 0.2px; }
-#list { float:right; width:150px;height:350px; background:#fff;
-list-style:none; padding:0;margin:0;margin-right:8px; 
-background-image:url('images/boxshadow.gif'); 
-background-position:bottom left; 
-background-repeat:no-repeat;
-font-size:12px;}
-#list li { padding:10px; } 
-#list li:hover { background:#555; color:#fff; cursor:pointer; cursor:hand; } 
-#message { background:#555; color:#fff; font-size:10px; position:absolute; display:none; width:100px; padding:5px; }
-#add-point { float:left; }
-div.input { padding:3px  0; }
-label { display:block; font-size:13px; }
-input, select { width:150px; }
-button { float:right; }
-div.error { color:red; font-weight:bold; }
-</style>
--->
 </head>
 
 
 <body>
 <?php
-include ("contribheader_body.php");
+include ("header.php");
 ?> 
 <div class="container first_image" style=" background-color:#fffff9; background-image: url('images/gradientbg.png'); background-repeat: repeat-x; background-position: bottom left; width:950px; padding-bottom:5px;"><!-- style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;"> -->
+   <div id='tab-set'>   
+     <ul class='tabs'>
+        <li><a href='#x' class='selected'>my home</a></li>
+    </ul>
+   </div>
 <table>
 <tbody>
 <tr>
@@ -206,12 +48,65 @@ include ("contribheader_body.php");
 </td>
 </tr>
 <tr>
-<td class="cms" style="border-right: 1px solid rgb(217, 92, 21); width: 50%;">
-<h3>About SeasonWatch</h3>
+<td class="cms" style="border-right: 1px solid rgb(217, 92, 21); width: 60%;">
+<h3 align="middle">my trees</h3>
 <p>
-<span style="">SeasonWatch is a new citizen volunteer network that monitors plant phenology (the timing of seasonal events like flowering and fruiting) across India. Observations collected through this network will contribute to an understanding of the effects of climate change on plant ecology.
-SeasonWatch will be launched in end-January 2010. If you wish to volunteer with this project, coordinate a local chapter, or help with publicity, please write to citizenscience(at)ncbs.res.in.
-<p/>&nbsp;
+<span style="">
+<table id="table1" class="tablesorter"  cellspacing="0"  style="width: 500px; margin-left: auto; margin-right: auto;">
+<colgroup>
+<col style="width: 82px;"/>
+<col style="width: 82px;"/>
+<col style="width: 87px;"/>
+<col style="width: 82px;"/>
+<col style="width: 85px;"/>
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th>Primary Name</th>
+<th>Nickname</th>
+<th>Last Observation</th>
+<th>Observations</th>
+</tr>
+</thead>
+<tbody>
+
+<?php 
+$count=0;
+//print "<tr class='delboxtr'>";
+$user_tree_table_settings = mysql_query("SELECT trees.tree_id, tree_nickname, species_scientific_name, species_primary_common_name, user_tree_table.user_tree_id, species_master.species_id, user_tree_table.last_observation_date FROM species_master INNER JOIN (trees INNER JOIN user_tree_table ON trees.tree_id = user_tree_table.tree_id AND user_tree_table.user_id='$_SESSION[user_id]') ON species_master.species_id = trees.species_id ORDER BY user_tree_table.last_observation_date ASC LIMIT 0 , 5");
+while ($row_settings = mysql_fetch_array($user_tree_table_settings)) 
+{
+print "<tr>";
+$count++;
+
+$result3 = mysql_query("SELECT path_name,file_name FROM species_images WHERE species_id='$row_settings[species_id]'");
+$image_names = mysql_fetch_array($result3);
+$species_pic1 = $image_names['path_name'].'/'.$image_names['file_name'];
+print "<td><a href='$species_pic1?TB_iframe=true' title='click for larger image' alt='click to view larger image' class='thickbox'><img src='".return_thumbnail($species_pic1)."'  width='70px'></a></td>";  
+
+print "<td>".$row_settings['species_primary_common_name']."</td>";
+print "<td>".$row_settings['tree_nickname']."</td>";
+print "<td bgcolor>".$row_settings['last_observation_date']."</td>";
+$treeLinkBegin = "<a class=thickbox rel=gallery-plants href=\"userobservations.php?usertreeid=".$row_settings['user_tree_id']."&TB_iframe=true&height=500&width=700\">Add</a>";
+
+print "<td style='text-align: center;'>$treeLinkBegin</td>";
+
+print "</tr>";
+}  
+
+echo "</tbody></table>";
+echo "<table id='table1'  cellspacing='0' cellpadding='3' style='width: 330px; margin-left: auto; margin-right: auto;'>
+<thead>
+<colgroup>
+<col style='width: 750px;'/>
+<col style='width: 750px;'/>
+<col style='width: 750px;'/>
+</colgroup>
+</thead>
+<tr><td></td><td></td><td><a href='listtree_for_observation.php'>view all trees</a></td></tr></table>";
+
+?>
 </td>
 
 <!-- For GMap  
@@ -223,11 +118,48 @@ SeasonWatch will be launched in end-January 2010. If you wish to volunteer with 
 <div id="message"></div>  
 </td>-->
 <td class="cms" style="solid rgb(217, 92, 21); width: 50%;">
-<h3>About SeasonWatch</h3>
+<h3 align="middle">what are others upto?</h3>
 <p>
-<span style="">SeasonWatch is a new citizen volunteer network that monitors plant phenology (the timing of seasonal events like flowering and fruiting) across India. Observations collected through this network will contribute to an understanding of the effects of climate change on plant ecology.
-SeasonWatch will be launched in end-January 2010. If you wish to volunteer with this project, coordinate a local chapter, or help with publicity, please write to citizenscience(at)ncbs.res.in.
-<p/>&nbsp;
+<?php 
+$last_months_date = date("Y-m-d",mktime(0, 0, 0, date("m")-1, date("d"),   date("Y")));
+//echo $last_months_date;
+$count_new_trees = mysql_query("SELECT count(tree_id) FROM trees WHERE date_of_addition > '" . $last_months_date . "'");
+$row_new_trees = mysql_fetch_array($count_new_trees);
+$count_new_observations = mysql_query("SELECT count(observation_id) FROM user_tree_observations WHERE date > '" . $last_months_date . "'");
+$row_new_observations = mysql_fetch_array($count_new_observations);
+$new_species = mysql_query("SELECT species_primary_common_name, location_master.city, full_name 
+FROM trees INNER JOIN (species_master,location_master, user_tree_table, users) 
+ON trees.species_id = species_master.species_id AND trees.tree_location_id=location_master.tree_location_id 
+AND user_tree_table.tree_id=trees.tree_id AND 
+user_tree_table.user_id=users.user_id AND trees.date_of_addition > '" . $last_months_date . "' 
+ORDER BY date_of_addition desc LIMIT 0,3;");
+$row_new_species = mysql_fetch_array($new_species);
+?>
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;new trees added in the last 1 month: <?php echo $row_new_trees['count(tree_id)']; ?><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;new observations in the last 1 month: <?php echo $row_new_observations['count(observation_id)']; ?><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;latest species added: <br/>
+<table id="table2" class="tablesorter"  cellspacing="0" >
+<thead>
+<tr>
+<td>Species Name</td>
+<td>City</td>
+<td>Observer</td>
+</tr>
+</thead>
+<?php 
+	echo "<tr><td>". $row_new_species['species_primary_common_name'] . "</td><td>".$row_new_species['location_master.city']."</td><td>".$row_new_species['full_name']."</td></tr>"; 
+/*$result3 = mysql_query("SELECT path_name,file_name FROM species_images WHERE species_id='".$row_new_species['species_id']."'");
+$image_names = mysql_fetch_array($result3);
+$species_pic1 = $image_names['path_name'].'/'.$image_names['file_name'];
+print "<td><img src='$species_pic1' height='110%' width='110%'></td></tr>";  */
+	
+	$row_new_species = mysql_fetch_array($new_species);
+	echo "<tr><td>". $row_new_species['species_primary_common_name']. "</td><td>".$row_new_species['city']."</td><td>".$row_new_species['full_name']."</td></tr>"; 
+	
+	$row_new_species = mysql_fetch_array($new_species);	
+	echo "<tr><td>". $row_new_species['species_primary_common_name']. "</td><td>".$row_new_species['city']."</td><td>".$row_new_species['full_name']."</td></tr>"; 
+?>
+</table>
 </td>
 
 </tr>
@@ -240,13 +172,14 @@ SeasonWatch will be launched in end-January 2010. If you wish to volunteer with 
 </tr>
 <tr>
 <td class="cms" colspan="2">
-<h3>My Observations (for the previous 1 year)</h3>
+<h3 align="middle">my observations</h3>
+<div align="middle">(weekly, over the previous year)</div>
 <p>Choose one of your trees below</p>
 <a name="my_observations"></a>
 <form method="POST" action=<?php echo $_SERVER['PHP_SELF']."#my_observations";?> name="filterform" onSubmit="return validatelist();"> 
 <?php
 $tree_id=$_POST['tree_control'];
-$sql=mysql_query("SELECT DISTINCT(tree_nickname), user_tree_table.tree_id FROM Species_master JOIN (trees, user_tree_table) ON trees.tree_id = user_tree_table.tree_id AND trees.species_id = Species_master.species_id AND user_tree_table.user_id = '$_SESSION[user_id]'");
+$sql=mysql_query("SELECT DISTINCT(tree_nickname), user_tree_table.tree_id FROM species_master JOIN (trees, user_tree_table) ON trees.tree_id = user_tree_table.tree_id AND trees.species_id = species_master.species_id AND user_tree_table.user_id = '$_SESSION[user_id]'");
 
 echo "<SELECT name='tree_control' id='tree_control'>";
 if($tree_id=='') {
@@ -280,7 +213,7 @@ $start_date= date('Y-m-d', mktime(0,0,0,$m,$de,$y));
 //echo $end_date, $start_date;
 echo "<table border='1' width='50%'><tr><td width='7%'></td><td width='1%'></td><td><b>$start_date</b></td><td width='9%'><b>$end_date</b></td></tr></table>";
 echo "<table border='1' width='50%'>";
-echo "<tr><td>Fruit Unripe: </td>";
+echo "<tr><td>Fresh Leaves: </td>";
 while ($start_date <= $end_date)
 {
 //echo $start_date;
@@ -288,13 +221,13 @@ $de+=7;
 $next_week_date= date('Y-m-d', mktime(0,0,0,$m,$de,$y));
 //echo $next_week_date;
 
-$user_tree_table_settings = mysql_query("SELECT DISTINCT(user_tree_observations.is_fruit_unripe) 
-	   FROM user_tree_observations INNER JOIN (users, user_tree_table, trees,Species_master)
+$user_tree_table_settings = mysql_query("SELECT DISTINCT(user_tree_observations.is_leaf_fresh) 
+	   FROM user_tree_observations INNER JOIN (users, user_tree_table, trees,species_master)
 	   ON user_tree_table.user_tree_id = user_tree_observations.user_tree_id 
 	   AND user_tree_table.user_id='$_SESSION[user_id]' 
 	   AND users.user_id=user_tree_table.user_id 
 	   AND user_tree_table.tree_id=trees.tree_id 
-	   AND trees.species_id=Species_master.species_id
+	   AND trees.species_id=species_master.species_id
 	   AND user_tree_table.tree_id='$tree_id'
 	   AND user_tree_observations.date >='$start_date'
 	   AND user_tree_observations.date <='$next_week_date'
@@ -303,59 +236,13 @@ $user_tree_table_settings = mysql_query("SELECT DISTINCT(user_tree_observations.
 $row_settings = mysql_fetch_array($user_tree_table_settings);
 
 //echo "in the inner loop";
-//echo $row_settings['is_fruit_unripe']."<br/>";
+//echo $row_settings['is_leaf_fresh']."<br/>";
 
-if($row_settings['is_fruit_unripe']=='0')
+if($row_settings['is_leaf_fresh']=='0')
 {
 echo "<td bgcolor='red'></td>";
 }
-elseif($row_settings['is_fruit_unripe']=='1')
-{
-echo "<td bgcolor='green'></td>";
-}
-else
-{
-echo "<td bgcolor='white'></td>";
-}
-
-$start_date=$next_week_date;
-}
-echo "</tr>";
-echo "<tr><td colspan=12></td></tr>";
-$m= date("m"); // Month value
-$de= date("d"); //today's date
-$y= date("Y")-1; // Year value
-$start_date= date('Y-m-d', mktime(0,0,0,$m,$de,$y)); 
-echo "<tr><td>Fruit Ripe: </td>";
-while ($start_date <= $end_date)
-{
-//echo $start_date;
-$de+=7;
-$next_week_date= date('Y-m-d', mktime(0,0,0,$m,$de,$y));
-//echo $next_week_date;
-
-$user_tree_table_settings = mysql_query("SELECT DISTINCT(user_tree_observations.is_fruit_ripe) 
-	   FROM user_tree_observations INNER JOIN (users, user_tree_table, trees,Species_master)
-	   ON user_tree_table.user_tree_id = user_tree_observations.user_tree_id 
-	   AND user_tree_table.user_id='$_SESSION[user_id]' 
-	   AND users.user_id=user_tree_table.user_id 
-	   AND user_tree_table.tree_id=trees.tree_id 
-	   AND trees.species_id=Species_master.species_id
-	   AND user_tree_table.tree_id='$tree_id'
-	   AND user_tree_observations.date >='$start_date'
-	   AND user_tree_observations.date <='$next_week_date'
-       ORDER BY user_tree_observations.date");
-
-$row_settings = mysql_fetch_array($user_tree_table_settings);
-
-//echo "in the inner loop";
-//echo $row_settings['is_fruit_unripe']."<br/>";
-
-if($row_settings['is_fruit_ripe']=='0')
-{
-echo "<td bgcolor='red'></td>";
-}
-elseif($row_settings['is_fruit_ripe']=='1')
+elseif($row_settings['is_leaf_fresh']=='1')
 {
 echo "<td bgcolor='green'></td>";
 }
@@ -373,7 +260,99 @@ $m= date("m"); // Month value
 $de= date("d"); //today's date
 $y= date("Y")-1; // Year value
 $start_date= date('Y-m-d', mktime(0,0,0,$m,$de,$y)); 
-echo "<tr><td>Flower Open: </td>";
+echo "<tr><td>Mature Leaves: </td>";
+while ($start_date <= $end_date)
+{
+//echo $start_date;
+$de+=7;
+$next_week_date= date('Y-m-d', mktime(0,0,0,$m,$de,$y));
+//echo $next_week_date;
+
+$user_tree_table_settings = mysql_query("SELECT DISTINCT(user_tree_observations.is_leaf_mature) 
+	   FROM user_tree_observations INNER JOIN (users, user_tree_table, trees,species_master)
+	   ON user_tree_table.user_tree_id = user_tree_observations.user_tree_id 
+	   AND user_tree_table.user_id='$_SESSION[user_id]' 
+	   AND users.user_id=user_tree_table.user_id 
+	   AND user_tree_table.tree_id=trees.tree_id 
+	   AND trees.species_id=species_master.species_id
+	   AND user_tree_table.tree_id='$tree_id'
+	   AND user_tree_observations.date >='$start_date'
+	   AND user_tree_observations.date <='$next_week_date'
+       ORDER BY user_tree_observations.date");
+
+$row_settings = mysql_fetch_array($user_tree_table_settings);
+
+//echo "in the inner loop";
+//echo $row_settings['is_leaf_mature']."<br/>";
+
+if($row_settings['is_leaf_mature']=='0')
+{
+echo "<td bgcolor='red'></td>";
+}
+elseif($row_settings['is_leaf_mature']=='1')
+{
+echo "<td bgcolor='green'></td>";
+}
+else
+{
+echo "<td bgcolor='white'></td>";
+}
+
+$start_date=$next_week_date;
+}
+echo "</tr>";
+echo "<tr><td colspan=12></td></tr>";
+$m= date("m"); // Month value
+$de= date("d"); //today's date
+$y= date("Y")-1; // Year value
+$start_date= date('Y-m-d', mktime(0,0,0,$m,$de,$y)); 
+echo "<tr><td>Flower Buds: </td>";
+while ($start_date <= $end_date)
+{
+//echo $start_date;
+$de+=7;
+$next_week_date= date('Y-m-d', mktime(0,0,0,$m,$de,$y));
+//echo $next_week_date;
+
+$user_tree_table_settings = mysql_query("SELECT DISTINCT(user_tree_observations.is_flower_bud) 
+	   FROM user_tree_observations INNER JOIN (users, user_tree_table, trees,species_master)
+	   ON user_tree_table.user_tree_id = user_tree_observations.user_tree_id 
+	   AND user_tree_table.user_id='$_SESSION[user_id]' 
+	   AND users.user_id=user_tree_table.user_id 
+	   AND user_tree_table.tree_id=trees.tree_id 
+	   AND trees.species_id=species_master.species_id
+	   AND user_tree_table.tree_id='$tree_id'
+	   AND user_tree_observations.date >='$start_date'
+	   AND user_tree_observations.date <='$next_week_date'
+       ORDER BY user_tree_observations.date");
+
+$row_settings = mysql_fetch_array($user_tree_table_settings);
+
+//echo "in the inner loop";
+//echo $row_settings['is_fruit_unripe']."<br/>";
+
+if($row_settings['is_flower_bud']=='0')
+{
+echo "<td bgcolor='red'></td>";
+}
+elseif($row_settings['is_flower_bud']=='1')
+{
+echo "<td bgcolor='green'></td>";
+}
+else
+{
+echo "<td bgcolor='white'></td>";
+}
+
+$start_date=$next_week_date;
+}
+echo "</tr>";
+echo "<tr><td colspan=12></td></tr>";
+$m= date("m"); // Month value
+$de= date("d"); //today's date
+$y= date("Y")-1; // Year value
+$start_date= date('Y-m-d', mktime(0,0,0,$m,$de,$y)); 
+echo "<tr><td>Open Flowers: </td>";
 while ($start_date <= $end_date)
 {
 //echo $start_date;
@@ -382,12 +361,12 @@ $next_week_date= date('Y-m-d', mktime(0,0,0,$m,$de,$y));
 //echo $next_week_date;
 
 $user_tree_table_settings = mysql_query("SELECT DISTINCT(user_tree_observations.is_flower_open) 
-	   FROM user_tree_observations INNER JOIN (users, user_tree_table, trees,Species_master)
+	   FROM user_tree_observations INNER JOIN (users, user_tree_table, trees,species_master)
 	   ON user_tree_table.user_tree_id = user_tree_observations.user_tree_id 
 	   AND user_tree_table.user_id='$_SESSION[user_id]' 
 	   AND users.user_id=user_tree_table.user_id 
 	   AND user_tree_table.tree_id=trees.tree_id 
-	   AND trees.species_id=Species_master.species_id
+	   AND trees.species_id=species_master.species_id
 	   AND user_tree_table.tree_id='$tree_id'
 	   AND user_tree_observations.date >='$start_date'
 	   AND user_tree_observations.date <='$next_week_date'
@@ -421,7 +400,7 @@ $m= date("m"); // Month value
 $de= date("d"); //today's date
 $y= date("Y")-1; // Year value
 $start_date= date('Y-m-d', mktime(0,0,0,$m,$de,$y)); 
-echo "<tr><td>Flower Bud: </td>";
+echo "<tr><td>Unripe Fruit: </td>";
 while ($start_date <= $end_date)
 {
 //echo $start_date;
@@ -429,13 +408,13 @@ $de+=7;
 $next_week_date= date('Y-m-d', mktime(0,0,0,$m,$de,$y));
 //echo $next_week_date;
 
-$user_tree_table_settings = mysql_query("SELECT DISTINCT(user_tree_observations.is_flower_bud) 
-	   FROM user_tree_observations INNER JOIN (users, user_tree_table, trees,Species_master)
+$user_tree_table_settings = mysql_query("SELECT DISTINCT(user_tree_observations.is_fruit_unripe) 
+	   FROM user_tree_observations INNER JOIN (users, user_tree_table, trees,species_master)
 	   ON user_tree_table.user_tree_id = user_tree_observations.user_tree_id 
 	   AND user_tree_table.user_id='$_SESSION[user_id]' 
 	   AND users.user_id=user_tree_table.user_id 
 	   AND user_tree_table.tree_id=trees.tree_id 
-	   AND trees.species_id=Species_master.species_id
+	   AND trees.species_id=species_master.species_id
 	   AND user_tree_table.tree_id='$tree_id'
 	   AND user_tree_observations.date >='$start_date'
 	   AND user_tree_observations.date <='$next_week_date'
@@ -446,11 +425,11 @@ $row_settings = mysql_fetch_array($user_tree_table_settings);
 //echo "in the inner loop";
 //echo $row_settings['is_fruit_unripe']."<br/>";
 
-if($row_settings['is_flower_bud']=='0')
+if($row_settings['is_fruit_unripe']=='0')
 {
 echo "<td bgcolor='red'></td>";
 }
-elseif($row_settings['is_flower_bud']=='1')
+elseif($row_settings['is_fruit_unripe']=='1')
 {
 echo "<td bgcolor='green'></td>";
 }
@@ -462,6 +441,53 @@ echo "<td bgcolor='white'></td>";
 $start_date=$next_week_date;
 }
 echo "</tr>";
+echo "<tr><td colspan=12></td></tr>";
+$m= date("m"); // Month value
+$de= date("d"); //today's date
+$y= date("Y")-1; // Year value
+$start_date= date('Y-m-d', mktime(0,0,0,$m,$de,$y)); 
+echo "<tr><td>Ripe Fruit: </td>";
+while ($start_date <= $end_date)
+{
+//echo $start_date;
+$de+=7;
+$next_week_date= date('Y-m-d', mktime(0,0,0,$m,$de,$y));
+//echo $next_week_date;
+
+$user_tree_table_settings = mysql_query("SELECT DISTINCT(user_tree_observations.is_fruit_ripe) 
+	   FROM user_tree_observations INNER JOIN (users, user_tree_table, trees,species_master)
+	   ON user_tree_table.user_tree_id = user_tree_observations.user_tree_id 
+	   AND user_tree_table.user_id='$_SESSION[user_id]' 
+	   AND users.user_id=user_tree_table.user_id 
+	   AND user_tree_table.tree_id=trees.tree_id 
+	   AND trees.species_id=species_master.species_id
+	   AND user_tree_table.tree_id='$tree_id'
+	   AND user_tree_observations.date >='$start_date'
+	   AND user_tree_observations.date <='$next_week_date'
+       ORDER BY user_tree_observations.date");
+
+$row_settings = mysql_fetch_array($user_tree_table_settings);
+
+//echo "in the inner loop";
+//echo $row_settings['is_fruit_unripe']."<br/>";
+
+if($row_settings['is_fruit_ripe']=='0')
+{
+echo "<td bgcolor='red'></td>";
+}
+elseif($row_settings['is_fruit_ripe']=='1')
+{
+echo "<td bgcolor='green'></td>";
+}
+else
+{
+echo "<td bgcolor='white'></td>";
+}
+
+$start_date=$next_week_date;
+}
+echo "</tr>";
+
 echo "<tr><td><br/></td></tr>";
 echo "</table>";
 echo "<table style='width:70%;'>";
@@ -486,6 +512,9 @@ echo "</table>";
 <div class="container bottom">
 <?php mysql_close($link);?>
 </div>
+<?php 
+   include("footer.php");
+?>
 </body>
 </html>
 

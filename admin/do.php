@@ -8,7 +8,8 @@ exit();
 
 $ret = $_SERVER['HTTP_REFERER'];
 
-
+$_GET[id];
+echo $_GET[id];
 
 include '../includes/dbc.php';
  if($_GET['cmd'] == 'approve')

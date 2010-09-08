@@ -14,7 +14,7 @@ $updatedate=date("Y-m-d",strtotime($_POST['obdate']));
 
 
 if($_POST['doUpdate'] == 'Update') 
-{                      $sql1 = "UPDATE user_tree_observations SET  
+{                      $sql1 = "UPDATE user_tree_observations SET  
                `date`='$updatedate', 
                `is_leaf_fresh`= '$_POST[is_leaf_fresh]',
                `freshleaf_count`='$_POST[freshleaf_count]',
@@ -32,11 +32,12 @@ if($_POST['doUpdate'] == 'Update')
               `temperature_max`= '$_POST[temperature_max]', 
               `temperature_min`= '$_POST[temperature_min]', 
               `rainfall_mm`= '$_POST[rainfall_mm]',  
-              `humidity_mm`= '$_POST[humidity_mm]'
+              `humidity_mm`= '$_POST[humidity_mm]',
+			  `user_id`='$_SESSION[user_id]'
                WHERE observation_id= '$observationId'";   
 //echo "sql1";  
 mysql_query($sql1,$link)or die("Insertion Failed:" .mysql_error()); 
-
+$sql = mysql_query("UPDATE user_tree_table SET `last_observation_date`='$updatedate' WHERE user_tree_id='$usertreeId';");
 }
 mysql_close($link); 
 ?> 

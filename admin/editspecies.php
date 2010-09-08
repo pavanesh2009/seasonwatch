@@ -1,5 +1,6 @@
 <?php 
 include '../includes/dbc.php';
+include '../main_includes.php';
 ?>
 <html>
 <head>
@@ -23,7 +24,7 @@ include '../includes/dbc.php';
 <?php
 $speciesID = $_GET['speciesid'];
 //echo $speciesID; 
-$species_details = mysql_query("SELECT * FROM Species_master Where species_id='$speciesID'"); 
+$species_details = mysql_query("SELECT * FROM species_master Where species_id='$speciesID'"); 
 //print_r(mysql_fetch_array($tree_details));
 $one_species_detail = mysql_fetch_array($species_details);
 ?>
@@ -247,7 +248,7 @@ break;
 <tr>
 <td colspan=2 align=center>
 <br>
-<input name="doUpdate" type="submit" id="doUpdate" value="Update">
+<input name="doUpdate" type="submit" id="doUpdate" value="Update" onclick="javascript:window.top.tb_remove();">
 &nbsp;&nbsp;
 </br>
 </td>

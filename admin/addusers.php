@@ -1,5 +1,8 @@
 <?php 
-include '../includes/dbc.php';
+   session_start();
+   $page_title="::: Add new User :::";
+//   include("../main_includes.php");
+   include("../includes/dbc.php");
 
 if($_POST['doAdd'] == 'Add') 
 { 
@@ -157,11 +160,14 @@ $mail->Send();
 
 <html>
 <head>
-<title>Add new User</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<script language="JavaScript" type="text/javascript" src="../js/jquery-1.3.2.min.js"></script>
-<script language="JavaScript" type="text/javascript" src="../js/jquery.validate.js"></script>
-
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <meta name="description" content="SeasonWatch" /> 
+   <meta name="keywords" content="Seasonwatch climate change, india, citizen science" /> 
+   <link rel="Shortcut Icon" href="images/favicon.ico" type="image/x-icon" />
+   <title><? echo $page_title; ?></title>
+   <link href="combine_css.php?version=<?php require('combine_css.php'); ?>" rel="stylesheet" type='text/css'>
+   <script src="js/jquery/jquery-1.3.2.min.js" type="text/javascript"></script>
+   <script src="combine_js.php?version=<?php require('combine_js.php'); ?>" type="text/javascript"></script>
 <script>
 $(document).ready(function(){
 $.validator.addMethod("username", function(value, element) {
@@ -171,46 +177,34 @@ $("#addusersForm").validate();
 });
 </script>
 </head>
+
 <body>
-<link media="screen, projection" type="text/css" href="../blueprint/screen.css" rel="stylesheet"></link>
-<link media="print" type="text/css" href="../blueprint/print.css" rel="stylesheet"></link>
-<link media="screen, projection" type="text/css" href="../blueprint/plugins/fancy-type/screen.css" rel="stylesheet"></link>
-<link type="text/css" href="../css/styles_new.css" rel="stylesheet"></link>
-<!--<link rel="stylesheet" href="../css/styles.css" type="text/css">-->
-
-
-
-
-<div class="container first_image" style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;">
+<div class='container first_image'>
 <table>
-<tbody>
 <tr>
-<td/>
+<td><b><h3>Add a new User</h3></b></td>
 </tr>
-</tbody>
 </table>
 <div>
-<hr/>
+<hr>
 </div>
 
 <table style="width: 930px; margin-left: auto; margin-right: auto;">
 <tbody>
-
 <tr>
 <td>
 <a href="admin.php" title="species_page">
-<img alt="" src="./images/cpanel.png" />cpanel</a>
+<img alt="" src="./images/cpanel.png">cpanel</a>
 &nbsp;
 &nbsp;
 &nbsp;
 &nbsp;
 </td>
 
+
 <td>
-<!-- <a href="newuser.php">Create User</a><br>
-<a href="admin_ban.php">Ban/Unban </a><br>-->
 <a href="species_page.php" title="species_page">
-<img alt="" src="./images/addedit.png" />Add new species</a>
+<img alt="" src="./images/addedit.png">Add new species</a>
 &nbsp;
 &nbsp;
 &nbsp;
@@ -219,7 +213,7 @@ $("#addusersForm").validate();
 
 <td>
 <a href="listspecies.php" title="species_page">
-<img alt="" src="./images/address_f2.png" />All Species List</a>
+<img alt="" src="./images/address_f2.png">All Species List</a>
 &nbsp;
 &nbsp;
 &nbsp;
@@ -228,26 +222,33 @@ $("#addusersForm").validate();
 
 <td>
 <a href="listusers.php" title="species_page">
-<img alt="" src="./images/icon-48-user.png" />User Manager</a>
+<img alt="" src="./images/icon-48-user.png">User Manager</a>
 &nbsp;
 &nbsp;
 &nbsp;
 &nbsp;
 </td>
+
 
 <td>
 <a href="admin_logout.php" title="species_page">
-<img alt="" src="./images/logout.png" />Logout</a>
+<img alt="" src="./images/logout.png">Logout</a>
 &nbsp;
 &nbsp;
 &nbsp;
 &nbsp;
 </td>
 
-<td width="10%"><h2>Administration Page</h2></td>
-</tr> 
-</table>
+<table>
+<tr>
+<td>
 
+</td>
+</tr>
+</table>
+<div>
+<hr/>
+</div>
 
 <link type="text/css" href="../css/register.css" rel="stylesheet"></link>
 <style>

@@ -1,19 +1,22 @@
-<?php 
-include("../includes/dbc.php");
-
-
+<?php
+    session_start();
+   $page_title=":: User Login Page ::";
+  // include("../main_includes.php");
+   include_once("../includes/dbc.php");
 //echo $collectid;
 
+
+if(!isset($_SESSION['user_admin'])) {
+header("Location: index.php");
+exit();
+}
 
 if ($_POST['doLogin']=='go')
 {
 $collectid2 = $_POST['userid'];
 
 $sql = "SELECT `user_id`,`full_name` FROM users WHERE 
-           user_id='$collectid2'			
-			"; 
-
-			
+           user_id='$collectid2'"; 
 $result = mysql_query($sql) or die (mysql_error()); 
 $num = mysql_num_rows($result);
   // Match row found with more than 1 results  - the user is authenticated. 
@@ -45,7 +48,8 @@ $num = mysql_num_rows($result);
 		header("Location: inspectlogin.php?msg=$msg");
 		}
 		
-}else{
+}
+else{
 $collectid="$_GET[userid]";
 $sql = "SELECT `user_email` FROM users WHERE 
            user_id= '$collectid'
@@ -59,38 +63,99 @@ $result = mysql_query($sql) or die (mysql_error());
 <head>
 <title>Seasonwatch Login</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<script language="JavaScript" type="text/javascript" src="../js/jquery-1.3.2.min.js"></script>
-<script language="JavaScript" type="text/javascript" src="../js/jquery.validate.js"></script>
-  <script>
+<!--<script language="JavaScript" type="text/javascript" src="../js/jquery-1.3.2.min.js"></script>
+<script language="JavaScript" type="text/javascript" src="../js/jquery.validate.js"></script>-->
+<?php
+include("../main_includes.php");
+?>
+<script>
   $(document).ready(function(){
     $("#logForm").validate();
   });
   </script>
-  <?php include '../header_head.php';
-?>
 </head>
-<body>
-<link rel="stylesheet" href="../blueprint/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="../blueprint/print.css" type="text/css" media="print">
-<link rel="stylesheet" href="../blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
-<script type="text/javascript" src="../js/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="../js/jquery.validate.js"></script>
-<link rel="stylesheet" href="../css/styles_new.css" type="text/css">
 
-<?php include '../header_body.php';
-?>
-<div class="container first_image" style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;">
+<body>
+<div class='container-top'>
+<div class='container first_image'>
+<table>
+<tbody>
+<tr>
+<td><b><h3>All added Users</h3></b></td>
+<td>
+</td></tr>
+</tbody>
+</table>
+<div>
+<hr>
+</div>
+
+
+<table style="width: 930px; margin-left: auto; margin-right: auto;">
+
+<tbody><tr>
+<td>
+<a href="admin.php" title="species_page">
+<img alt="" src="./images/cpanel.png">cpanel</a>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+</td>
+
+
+<td>
+<a href="species_page.php" title="species_page">
+<img alt="" src="./images/addedit.png">Add new species</a>
+&nbsp;
+
+&nbsp;
+&nbsp;
+&nbsp;
+</td>
+
+<td>
+<a href="listspecies.php" title="species_page">
+<img alt="" src="./images/address_f2.png">All Species List</a>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+</td>
+
+<td>
+<a href="listusers.php" title="species_page">
+
+<img alt="" src="./images/icon-48-user.png">User Manager</a>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+</td>
+
+
+<td>
+<a href="admin_logout.php" title="species_page">
+<img alt="" src="./images/logout.png">Logout</a>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+
+</td>
+
+<div class='container first_image'>
 <table>
 <tbody>
 <tr>
 <td/>
+<b>All Registered Users</b>
 </tr>
 </tbody>
 </table>
 <div>
 <hr/>
 </div>
-
 <table style="width: 930px; margin-left: auto; margin-right: auto;">
 
 <!--

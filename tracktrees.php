@@ -10,7 +10,7 @@ $getlocationname= $_SESSION['treelocID'];
 //echo $getlocationname;
 
 if($_POST['Submit'] == 'Submit')  
-{                     foreach($_POST as $key => $value)
+{                     foreach($_POST as $key => $value)
 { 
 $data[$key] = filter($value);
 } 
@@ -30,7 +30,7 @@ $dos_value="'$_POST[degree_of_slope]',";
  }
 $sql1 = "INSERT INTO trees  
               (tree_desc,is_fertilised,
-              is_watered,species_id,tree_location_id,location_type,".$dfw_fieldname.$dos_fieldname." aspect)  
+              is_watered,species_id,tree_location_id,location_type,".$dfw_fieldname.$dos_fieldname." aspect,date_of_addition)  
               VALUES
               ('$_POST[tree_desc]',
               '$_POST[is_fertilised]',
@@ -39,20 +39,26 @@ $sql1 = "INSERT INTO trees
               '$_SESSION[treelocID]', 
               '$_POST[location_type]',".
                $dfw_value.$dos_value." 
-              '$_POST[aspect]'   
+              '$_POST[aspect]',
+				CURDATE()
               )";  
               mysql_query($sql1,$link)or die("Insertion Failed:" .mysql_error()); 
 
 //echo "ID of last inserted record is: " . mysql_insert_id();
 $tree_id = mysql_insert_id();
 //echo "$tree_id"; 
- 
+if ($_POST[assigned_user]){
+	$user_to_assign=$_POST[assigned_user];
+}
+else {
+	$user_to_assign=$_SESSION[user_id];
+}
 $sql2 = "INSERT INTO user_tree_table 
          (tree_id,tree_nickname,user_id) 
          VALUES
          ('$tree_id', 
          '".addslashes($_POST[tree_nickname])."',
-         '$_SESSION[user_id]'
+         '$user_to_assign'
          )"; 
        mysql_query($sql2,$link) or die("Insertion Failed2:" .mysql_error()); 
 
@@ -92,25 +98,15 @@ if($_POST[tree_girth]!="")
 
 unset($_SESSION['treelocation']); 
 ?>  
- 
-<html lang="en">
-<head>
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
-<title>SeasonWatch</title> 
-<?php 
-include ("contribheader_head.php");
+<? 
+   session_start();
+   $page_title="SeasonWatch";
+   include("main_includes.php");
 ?>
-</head>
 
 <body>
-<link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print">
-<link rel="stylesheet" href="blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
-<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="js/jquery.validate.js"></script>
-<link rel="stylesheet" href="css/styles_new.css" type="text/css">
 <?php 
-include ("contribheader_body.php");
+include ("header.php");
 ?>
 
 <div class="container first_image" style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;">
@@ -151,7 +147,7 @@ $tree_nickname=$_POST['tree_nickname'];
 echo "<td>" . $tree_nickname . "</td>";
 
 $species_scientific_nameID=$_POST['species_id'];
-$query1 = mysql_query("SELECT * FROM Species_master WHERE species_id=$species_scientific_nameID");
+$query1 = mysql_query("SELECT * FROM species_master WHERE species_id=$species_scientific_nameID");
 while($row_settings = mysql_fetch_array($query1)) 
 {
 echo "<td>" . $row_settings['species_primary_common_name'] . "</td>";
@@ -181,5 +177,8 @@ mysql_close($link);
 </div>
 <div class="container bottom">
 </div>
+<?php 
+   include("footer.php");
+?>
 </body>
 </html>

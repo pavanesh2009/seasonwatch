@@ -1,488 +1,290 @@
-<?php 
-include './includes/dbc.php';
-page_protect();
+<?php
+session_start();
+include_once("includes/dbc.php");  
+$strSpecies='Type a species name';
+$strLocation='Type a location name';
+$page_title="SeasonWatch: Data";
+include("main_includes.php");
 
-?> 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
-   "http://www.w3.org/TR/html4/strict.dtd">
-<html lang="en">
-<head>
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
-<title>SeasonWatch : Explore data</title>
-<link media="screen, projection" type="text/css" href="blueprint/screen.css" rel="stylesheet">
-</link>
-<link media="print" type="text/css" href="blueprint/print.css" rel="stylesheet">
-</link>
-<link media="screen, projection" type="text/css" href="blueprint/plugins/fancy-type/screen.css" rel="stylesheet">
-</link>
-<script src="js/jquery-1.3.2.min.js" type="text/javascript">
-</script>
-<script src="js/jquery.validate.js" type="text/javascript">
-</script>
-<link type="text/css" href="css/styles_new.css" rel="stylesheet">
-</link>
-<link type="text/css" href="css/sighting.css" rel="stylesheet">
-</link>
-<style type="text/css">
-@media print{.gmnoprint{display:none}}@media screen{.gmnoscreen{display:none}}
-</style>
-<script type="text/javascript" charset="UTF-8" src="http://maps.gstatic.com/cat_js/intl/en_ALL/mapfiles/208a/maps2.api/%7Bmod_drag,mod_ctrapi%7D.js">
-</head>
+$kml_text="<span class='help_text_content'><h4>KML</h4>KML is a file format used to display geographic data in an earth browser, such as Google Earth, Google Maps</span>";
+
+$csv_text="<span class='help_text_content'><h4>CSV</h4>CSV is Comma-Separated Value file for use in spreadsheet and database tools</span>";
+
+include("header.php");
+include("google_maps_api.php");
+?>
+        <script src='js/markers/markerclusterer.js' type='text/javascript'></script>
+        <script src="js/markers/extinfowindow.js" type="text/javascript"></script>
+        <link type="text/css" rel="Stylesheet" media="screen" href="js/markers/redInfoWindow.css"/>
+        <script src="js/jquery/jquery.cycle.js" type="text/javascript"></script>
+<?
+include("query_reports.php");
+				
+$where_clause2 = " order by location_master.latitude";
+$where_clause3 = " order by location_master.tree_location_id DESC";
+$map_sql = $sql . " "  . $where_clause2;
+$table_sql = $sql . " "  . $where_clause3;
+
+?>
+
 <script type="text/javascript">
 
-     var styles = [[{
-      
-        height: 35,
-        width: 35,
-        opt_anchor: [16, 0],
-        opt_textColor: '#FF00FF'
-      },
-      {
-       
-        height: 45,
-        width: 45,
-        opt_anchor: [24, 0],
-        opt_textColor: '#FF0000'
-      },
-      {
+	function createMarker(map, point,icon) {		
+  		var marker = new GMarker(point,icon);
+                return marker;
+         }
+
+         function createPop(marker, html_content) {
+  		GEvent.addListener(marker, "click", function() {
+			marker.openExtInfoWindow(
+			      map,
+              		      "custom_info_window_red",
+              		      "<div>Loading...</div>",
+              		      {
+				ajaxUrl: "getcontent.php?" + html_content,
+                		beakOffset: 3
+              		       }
+            		      );
+			
+  		});
+
+                
+  		return marker;
+
+	}
+
+	var map=null;
         
-        height: 55,
-        width: 55,
-        opt_anchor: [32, 0]
-      }],
-      [{
-        
-        height: 27,
-        width: 30,
-        anchor: [3, 0],
-        textColor: '#FF00FF'
-      },
-      {
-        
-        height: 36,
-        width: 40,
-        opt_anchor: [6, 0],
-        opt_textColor: '#FF0000'
-      },
-      {
-        
-        width: 50,
-        height: 45,
-        opt_anchor: [8, 0]
-      }],
-      [{
-        
-        height: 26,
-        width: 30,
-        opt_anchor: [4, 0],
-        opt_textColor: '#FF00FF'
-      },
-      {
-        
-        height: 35,
-        width: 40,
-        opt_anchor: [8, 0],
-        opt_textColor: '#FF0000'
-      },
-      {
-       
-        width: 50,
-        height: 44,
-        opt_anchor: [12, 0]
-      }]];
-     var map = null;
-      var markers = [];
-      var markerClusterer = null;
+        var markers = [];
+        var markerClusterer = null;
 
-    function initialize() {
-        if(GBrowserIsCompatible()) {
-         var icon1 = new GIcon();
-	icon1.shadow = "" ;
-	icon1.image = "mark1.png";
-	icon1.iconSize = new GSize(8, 8);
-	icon1.shadowSize = new GSize(0, 0);
-	icon1.iconAnchor = new GPoint(6, 1);
-	icon1.infoWindowAnchor = new GPoint(5, 1);
 
-	var icon2 = new GIcon();
-	icon2.shadow = "" ;
-	icon2.image = "mark2.png";
-	icon2.iconSize = new GSize(8, 8);
-	icon2.shadowSize = new GSize(0, 0);
-	icon2.iconAnchor = new GPoint(6, 1);
-	icon2.infoWindowAnchor = new GPoint(5, 1);
-
-	var icon3 = new GIcon();
-	icon3.shadow = "" ;
-	icon3.image = "mark3.png";
-	icon3.iconSize = new GSize(8, 8);
-	icon3.shadowSize = new GSize(0, 0);
-	icon3.iconAnchor = new GPoint(6, 1);
-	icon3.infoWindowAnchor = new GPoint(5, 1);
-
-	var icon4 = new GIcon();
-	icon4.shadow = "" ;
-	icon4.image = "mark4.png";
-	icon4.iconSize = new GSize(8, 8);
-	icon4.shadowSize = new GSize(0, 0);
-	icon4.iconAnchor = new GPoint(6, 1);
-	icon4.infoWindowAnchor = new GPoint(5, 1);
-
-	var icon5 = new GIcon();
-	icon5.shadow = "" ;
-	icon5.image = "mark5.png";
-	icon5.iconSize = new GSize(8, 8);
-	icon5.shadowSize = new GSize(0, 0);
-	icon5.iconAnchor = new GPoint(6, 1);
-	icon5.infoWindowAnchor = new GPoint(5, 1);
-
-	var icon6 = new GIcon();
-	icon6.shadow = "" ;
-	icon6.image = "mark6.png";
-	icon6.iconSize = new GSize(8, 8);
-	icon6.shadowSize = new GSize(0, 0);
-	icon6.iconAnchor = new GPoint(6, 1);
-	icon6.infoWindowAnchor = new GPoint(5, 1);
-
-	var icon7 = new GIcon();
-	icon7.shadow = "" ;
-	icon7.image = "mark7.png";
-	icon7.iconSize = new GSize(8, 8);
-	icon7.shadowSize = new GSize(0, 0);
-	icon7.iconAnchor = new GPoint(6, 1);
-	icon7.infoWindowAnchor = new GPoint(5, 1);
-
-	var icon8 = new GIcon();
-	icon8.shadow = "" ;
-	icon8.image = "mark8.png";
-	icon8.iconSize = new GSize(8, 8);
-	icon8.shadowSize = new GSize(0, 0);
-	icon8.iconAnchor = new GPoint(6, 1);
-	icon8.infoWindowAnchor = new GPoint(5, 1);
-
-	var icon9 = new GIcon();
-	icon9.shadow = "" ;
-	icon9.image = "mark9.png";
-	icon9.iconSize = new GSize(8, 8);
-	icon9.shadowSize = new GSize(0, 0);
-	icon9.iconAnchor = new GPoint(6, 1);
-	icon9.infoWindowAnchor = new GPoint(5, 1);
-
-	var icon10 = new GIcon();
-	icon10.shadow = "" ;
-	icon10.image = "mark10.png";
-	icon10.iconSize = new GSize(8, 8);
-	icon10.shadowSize = new GSize(0, 0);
-	icon10.iconAnchor = new GPoint(6, 1);
-	icon10.infoWindowAnchor = new GPoint(5, 1);
-	 map = new GMap2(document.getElementById('map'));
+    function load() {
+      if (GBrowserIsCompatible()) {
+         map = new GMap2(document.getElementById('map'));
           map.setCenter(new GLatLng(20.21,77.86), 4);
           map.addControl(new GLargeMapControl());
           map.addControl(new GMapTypeControl());
-          
-      <?
-	 
-          $table_sql = $sql;
-	 $result = mysql_query($sql);
-	 $i = 1;
+           var icon1 = new GIcon(G_DEFAULT_ICON);
+           icon1.image = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|1e8a94";
+
+         
+<?	
+	
+	$result = mysql_query($map_sql);
+	$i = 1;
 	list($startSeason,$endSeason) =  explode('-',$season);
-         while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
-            $loc_name = $line['location_name'];
-            if( $line['latitude'] ) {
-            
-	    print "var latlng = new GLatLng(" . $line['latitude'] . "+(Math.random()*0.0002)-0.0001," . $line['longitude'] . "+(Math.random()*0.0002)-0.0001);\n";
+	while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
 
-	    print "var markerOnMap = createMarker(latlng,'"  . addslashes( $loc_name ) ." ', 'test', 'test','test', 'test','test', 'test','test','test',icon7);\n";
-            //print "var markerOnMap = createMarker(latlng, '" . addslashes( $loc_name ) ."');\n"; 
-            print "markers.push(markerOnMap);\n";
+                  
+                $lat= $line['latitude'];
+                $lng = $line['longitude'];
+                if($line['latitude']) {
+
+                 if(($lat == $oldlat) && ($lng == $oldlng)) {
+		    
+                 } else {
+                        echo "var point = new GLatLng(" . $line['latitude'] . "," . $line['longitude'] .");\n";
+		        print "var marker_get = createMarker(map, point, icon1);\n\n"; 
+			print "markers.push(marker_get);\n\n"; 
+                        $location_id_get = $line['tree_location_id'];
+                         $url_add = '';
+                if($_GET) { 
+                     foreach( $_GET as $key => $value ) {
+                              /* if( strtolower($value) != 'all' && $value !='' ) {
+                                  if(!$_GET['location']) {
+                                         $url_add .="&location=" . $location_id_get;
+                                  } elseif($key == 'location') {
+                                         $url_add .="&location=" . $location_id_get;
+                                  } */
+
+				  if($key!='location') {
+                        
+				  $url_add .="&" . $key . "=" . $value;     
+				  
+                                 }
+                      }
+		        $url_add .="&location=" . $location_id_get;
+                 } else { 
+
+                        $url_add = "location=" . $location_id_get;
+                 }
+                 print "var final_content = '" . $url_add . "';";
+                 print "createPop(marker_get,final_content);";
+?>
+                 GEvent.addDomListener(map, 'extinfowindowupdate',function(){
+                     $('.ticker').each(function() { 
+                       
+                        var ticker = $(this);
+                        $(this).cycle({ 
+                        fx:     'fade', 
+                        speed:  'fast', 
+                        timeout: 0, 
+                        next:   '#next2', 
+                        prev:   '#prev2' 
+                        });
+
+                    });
+                 });
+<?
+                 
+                 $oldlat = $lat;
+                 $oldlng = $lng;
+                 }
+             
+                 }
 	    }
-          }
-      ?>
-       refreshMap();
-          
-        }
-      }
+        
+?>
 
-       function createMarker(point, user, friend, location, city, state, species, sDate, obsFreq, start, icon){
-       	
-                var markerOnMap = new GMarker(point,icon);
-                GEvent.addListener(markerOnMap, "click", function() {
-                        markerOnMap.openInfoWindowHtml(user);
-                });
-                return markerOnMap;
-        }
-
+        refreshMap();
+	}
+   }
    
-      function refreshMap() {
+
+
+   function refreshMap() {
         if (markerClusterer != null) {
           markerClusterer.clearMarkers();
         }
-        var zoom = parseInt(document.getElementById("zoom").value, 10);
-        var size = parseInt(document.getElementById("size").value, 10);
-        var style = document.getElementById("style").value;
+        //var zoom = parseInt(-1, 10);
+	var zoom  = 12;
+        var size = parseInt(-1, 10);
+        var style = -1;
         zoom = zoom == -1 ? null : zoom;
         size = size == -1 ? null : size;
         style = style == "-1" ? null: parseInt(style, 10);
-        markerClusterer = new MarkerClusterer(map, markers, {maxZoom: zoom, gridSize: size, styles: styles[style]});
+        markerClusterer = new MarkerClusterer(map, markers, {maxZoom: zoom, gridSize: size});
       }
-</script>
-</head> 
 
+    </script>
 <body onload="load()" onunload="GUnload()">
-<div class="container first_image" style="padding-bottom: 10px; width: 950px; margin-left: auto; margin-right: auto; -moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;">
-</div>
-<div class="container first_image"  style="padding-bottom:10px;width:950px;margin-left:auto;margin-right:auto">
-<script type="text/javascript">
-$("ul.tabs li.label").hide();
-$("#tab-set > div").hide();
-$("#tab-set > div").eq(0).show();
-//$("#tab-set > div").eq(1).show();
-$("ul.tabs a").click(
-function() {
-$("ul.tabs a.selected").removeClass('selected');
-$("#tab-set > div").hide();
-$(""+$(this).attr("href")).fadeIn('slow');
-$(this).addClass('selected');
-$('#table1').trigger("appendCache");
-return false;
-}
-);
-$("#toggle-label").click( function() {
-$(".tabs li.label").toggle();
-return false;
-});
-</script>
-<script type="text/javascript">
-$().ready(function() {
-$('#species').emptyonclick();
-$('#location').emptyonclick();
-$("#species").autocomplete("autocomplete_reports.php", {
-width: 260,
-selectFirst: false,
-matchSubset :0,
-mustMatch: true,
-});
 
-$("#species").result(function(event , data, formatted) {
- if (data) {
- document.getElementById('species_hidden').value = data[1];
- }
-});
+<style>
+.tickerContainer { padding: 10px; }
 
-$('#location').autocomplete("auto_miglocations.php", {
- width: 400,
- selectFirst: false,
- matchSubset :0,
- mustMatch: true,
-});
+</style>
 
-$("#location").result(function(event , data, formatted) {
- if (data) {
- document.getElementById('location_hidden').value = data[1];
- }
-});
-});
-
-
-function get_remove(parameter) {
-var remove_season = '2007-2008';
-var remove_type = 'All';
-var remove_species = '';
-var remove_user = 'All';
-var remove_state = '';
-var remove_location = '';
-
-if ( parameter == 'season') {
- remove_season = '2009-2010';
-}
-
-if ( parameter == 'type') {
- remove_type = 'All';
-}
-
-if (parameter == 'species') {
- remove_species = 'All';
-}
-
-if (parameter == 'user') {
- remove_user = 'All';
-}
-
-if (parameter == 'location') {
- remove_location = 'All';
-}
-
-if ( parameter == 'state') {
- remove_state = 'All';
-}
-
-var url = "data.php?season=" + remove_season + "&type=" + remove_type + "&species=" + remove_species + "&user=" + remove_user + "&state=" + remove_state + "&location=" + remove_location;
-
-window.location = url;
-}
-
-function formatItem(row) {
- var completeRow;
- completeRow = new String(row);
- var scinamepos = completeRow.lastIndexOf("(");
- var rest = substr(completeRow,0,scinamepos);
- var sciname = substr(completeRow,scinamepos);
- var commapos = sciname.lastIndexOf(",");
- sciname = substr(sciname,0,commapos);
- var newrow = rest + ' <i>' + sciname + '</i>';
- return newrow;
-}
-
-function isEmpty(s){
- return ((s == null) || (s.length == 0))
-}
-
- // BOI, followed by one or more whitespace characters, followed by EOI.
- var reWhitespace = /^\s+$/
- // BOI, followed by one or more characters, followed by @,
- // followed by one or more characters, followed by .,
- // followed by one or more characters, followed by EOI.
- var reEmail = /^.+\@.+\..+$/
- var defaultEmptyOK = false
- // Returns true if string s is empty or
- // whitespace characters only.
-
- function isWhitespace (s)
-
-{ // Is s empty?
-return (isEmpty(s) || reWhitespace.test(s));
-}
-
-function substr( f_string, f_start, f_length ) {
-// http://kevin.vanzonneveld.net
-// + original by: Martijn Wieringa
-// * example 1: substr("abcdef", 0, -1);
-// * returns 1: "abcde"
- if(f_start < 0) {
- f_start += f_string.length;
- }
-
-if(f_length == undefined) {
-f_length = f_string.length;
-} else if(f_length < 0){
-f_length += f_string.length;
-} else {
-f_length += f_start;
-}
-
-if(f_length < f_start) {
-f_length = f_start;
-}
-
-return f_string.slice(f_start,f_length);
-}
-</script>
-<script src="js/pager/jquery.tablesorter.pager.js" type="text/javascript"/>
-<script src="js/pager/jquery.tablesorter.pager.js" type="text/javascript">
-</script>
-<script src="js/pager/chili-1.8b.js" type="text/javascript">
-</script>
-<script src="js/pager/docs.js" type="text/javascript">
-</script>
-<link type="text/css" rel="stylesheet" href="js/pager/style.css">
-
-<script type="text/javascript">
-$(function() {
-$("#table1")
-.tablesorter({ headers: {
- 5: { sorter: false }, 6: { sorter: false }, 7 : { sorter: false }, 8: { sorter: false } },widthFixed: true, widgets: ['zebra']})
- .tablesorterPager({container: $("#pager"), positionFixed: false});
- $("#table2")
- .tablesorter({widthFixed: true, widgets: ['zebra']})
- .tablesorterPager({container: $("#pager2"), positionFixed: false});
-});
-</script>
-<script language="javascript" src="js/jquery.autocomplete.js"></script>
-<script language="javascript" src="js/jquery.bgiframe.min.js"></script>
-<script language="javascript" src="js/jquery.autocomplete.js"></script>
-<link type="text/css" rel="stylesheet" href="js/jquery.autocomplete.css">
-<link type="text/css" rel="stylesheet" href="js/jquery.emptyonclick.css">
+<div class="container first_image">
 <FORM name="reports" action="data.php" method="GET">
 <table class="filter">    
 <tr>
-<td style=''>Season</td>
-<td>Participant</td>
-</tr>      
-<td style="width:190px;">
-<select style="width:85%;font-size:12px;" name='season'>
+         <td>season</td>
+         <td>species</td>
+         <td>participant</td>
+         
+       </tr>      
+         <td style="width:190px;">
+                    <select style="width:85%;font-size:12px;" name='season'>
+                    <option value='All'>All seasons</option>
+                    <?php
+                    /**
+                     * Use the current month and year to find out the last season to be
+                     * displayed in the drop down. (Season : 1st July - 31st Aug)
+                     */
+                    $currentMonth = date('m');
+                    $currentYear  = date('Y');
 
-<div class="container" style="width: 930px; margin-left: auto; margin-right: auto; text-align: right;">
-<div id="tab-set" class="container" style="border-top: 1px solid rgb(217, 92, 21); width: 930px; margin-left: auto; margin-right: auto;">
-<ul class="tabs">
-<li>
-<a class="selected" href="#text1">map</a>
-</li>
-<li>
-<a class="" href="#text2">tabular</a>
-</li>
-</ul>
-<div id="text1" style="display: block;">
-<div id="map" style="width: 930px; height: 500px; position: relative; background-color: rgb(229, 227, 223);">
+                    /**
+                     * If the current month is greater than June i.e July and onwords only then display
+                     * the current year in the season
+                     */
+                    if ($currentMonth > 6) {
+                        $endSeason = $currentYear;
+                    } else {
+                        $endSeason = $currentYear - 1;
+                    }
+
+                    // The sighting started in 2007-2008 so start from this season
+                    for ($i = 2010;$i <= $endSeason; $i++) {
+                        $fromTo = "$i-".($i+1);
+                        echo '<option value="' . $fromTo  . '"';
+                            echo ($_GET['season'] == $fromTo) ? ' selected>' : '>';
+                       
+                        echo $fromTo;
+                        echo '</option>';
+                    }
+                    ?>
+           
+                    </select>
+		    <? $current_season = getCurrentSeason();
+                   
+                       if( $_GET['season'] != '' && strtolower($_GET['season']) !='all' ) {		       
+		    ?>
+                     <a title="remove season" href="#" onClick="get_remove('season');">X</a>
+                    
+                       <? } ?>
+
+                   </td>
+
+<!-- <td  style="width:190px;">
+                    
+		    
+                    <select name="type" style="width:85%">
+                            <option value="All">All</option>
+                            <option value="first"<?php if($type == 'first') print("selected"); ?>>First</option>
+                            <option value="general"<?php if($type == 'general') print("selected"); ?>>General</option>
+                            <option value="last"<?php if($type == 'last') print("selected"); ?>>Last</option>
+                     </select>
+                      <? if( $_GET['type'] != "All" && $_GET['type'] != '') {  ?>
+                           <a title="remove sighting type" href="#" onclick="get_remove('type');">X</a>
+                      <? } ?>
+		</td>
+-->	  
+                <td style="width:300px;">
+                    
+                    
+                    <input type='text' id='species' size="25" style="width:85%;border:solid 1px #666;padding:2px" value="<? echo $strSpecies; ?>">
+		               <input type='hidden' id='species_hidden' name='species' value="<? echo $species; ?>">
+                             
+                             <? if( is_numeric($_GET['species'] )) {  ?>
+                                  <a title="remove species" href="#" onclick="get_remove('species');">X</a>
+                             <? } ?>
+		</td>
 
 
 
+		<td style="width:240px;">
+           	   
+                    <select name=user style="width:85%">
+                    <option value='All'>-- Select --</option>
+                    <?php
 
+                    //  The current season..
+                    $today = getdate();
+                    $currentSeason = ($today['mon'] > 6) ? $today['year'] : $today['year'] - 1;
+                    $season = (isset($_POST['season'])) ? substr($_POST['season'], 0, 4) : $currentSeason;
+                    $seasonEnd = (int)$season + 1;
 
-
-
-
-
-
-
-
-
-
-
-
-<?php
-/**
-* Use the current month and year to find out the last season to be
-* displayed in the drop down. (Season : 1st July - 31st Aug)
-*/
-?>
-$sql = "SELECT DISTINCT u.user_name, u.user_id from migwatch_users u INNER JOIN migwatch_l1 l1 ON ";
-   $sql .= "l1.user_id=u.user_id WHERE l1.valid=1 ";
-             //$sql .= "AND l1.obs_start BETWEEN '$season-07-01' AND '$seasonEnd-06-30'  ";
-                    $sql .= "ORDER BY u.user_name";
+                     $sql = "SELECT user_id,full_name from users inner join (user_tree_table,trees,location_master) ON user_tree_table.user_id=users.user_id AND users.tree_id=trees_tree_id AND trees.tree_location_id=location_master.tree_location_id";
+                    $sql .= "ORDER BY full_name";
                     $result = mysql_query($sql);
-   if(mysql_num_rows($result) <= 0) {
-       $sql = "SELECT DISTINCT u.user_name, u.user_id from migwatch_users u INNER JOIN migwatch_l1 l1 ON ";
-       $sql .= "l1.user_id=u.user_id WHERE l1.valid=1 ORDER BY u.user_name";
-       $result = mysql_query($sql);
-       }
-    while ($row = mysql_fetch_array($result, MYSQL_ASSOC)){
-       print "<option value=".$row{'user_id'};
-       if (($_GET['user'] != "") && ($_GET['user'] == $row{'user_id'}))
-       print " selected ";
-       print ">".$row{'user_name'}."</option>";
-       }
-?>
-</select>
-</div>&nbsp;
-
-<?php 
-if( is_numeric( $_GET['user'] )) {  ?>
-<a href="#" onclick="get_remove('user');">X</a>
-<? } ?>
-</td><td></td>
-</tr>
-
-<tr><td colspan='4' style='height:15px'></tr>
+                    if(mysql_num_rows($result) <= 0) {
+                        $sql = "SELECT user_id,full_name from users ORDER BY full_name  ";
+                      //  $sql .= "l1.user_id=u.user_id WHERE l1.valid=1 ORDER BY u.user_name";
+                        $result = mysql_query($sql);
+                    }
+                    while ($row = mysql_fetch_array($result, MYSQL_ASSOC)){
+                        print "<option value=".$row{'user_id'};
+                        if (($_GET['user'] != "") && ($_GET['user'] == $row{'user_id'}))
+                            print " selected ";
+                        print ">".$row{'full_name'}."</option>";
+                    }
+                    ?>
+                    </select>
+                </div>
+                <? if( is_numeric( $_GET['user'] )) {  ?>
+                     <a href="#" onclick="get_remove('user');">X</a>
+                <? } ?>
+		</td>
+		</tr>
+                
 		<tr>
-			<td colspan="2">State</td>
-         <td colspan="2">Location</td>
-<td>
-<? if( count($_GET) > 0 ) { ?>
-<a href="data.php">Remove&nbsp;All</a>
-<? } ?>
-</td>
-</tr>
-<tr>
+			<td colspan="2">state</td>
+         <td colspan="2">location</td>
+	 	 
+       </tr>
+        <tr>
           
           <td colspan="2" style="">
              <select style="width:93%;"  id="state" name=state >
@@ -490,7 +292,7 @@ if( is_numeric( $_GET['user'] )) {  ?>
                         <option value="all">All the States</option>
                     <?php
 
-                            $result = mysql_query("SELECT state_id, state FROM migwatch_states order by state");
+                           $result = mysql_query("SELECT state_id, state FROM seswatch_states order by state");
                             if($result){
 						while ($row = mysql_fetch_array($result, MYSQL_ASSOC)){
                                     if($row['state'] != 'Not In India') {
@@ -509,189 +311,200 @@ if( is_numeric( $_GET['user'] )) {  ?>
 				    	                  print ">".$other."</option>\n";
                             }
 
-                    ?></select>&nbsp;&nbsp;
+                    ?></select>
                    <? if( is_numeric($_GET['state'] )) {  ?>
                      <a title="remove state" href="#" onclick="get_remove('state');">X</a>
                    <? } ?>
 
           </td>
 
-<td style="width:400px;">
-   <input type='text' id='location' value="<? echo $strLocation; ?>" style="width:85%;border:solid 1px #666">
-   <input type='hidden' id='location_hidden' name='location' value="<? echo $location; ?>">
-   <? if( is_numeric($_GET['location'] )) {  ?>
-   &nbsp;<a title="remove location" href="#" onclick="get_remove('location');">X</a>
-   <? } ?>
-</td>
+			<td style="width:400px;">
+               
+               <input type='text' id='location' value="<? echo $strLocation; ?>" style="padding:2px;width:85%;border:solid 1px #666">
+               <input type='hidden' id='location_hidden' name='location' value="<? echo $location; ?>">
+               <? if( is_numeric($_GET['location'] )) {  ?>
+                  &nbsp;<a title="remove location" href="#" onclick="get_remove('location');">X</a>
+               <? } ?>
+              
+         </td>
         
-<td style='width:110px'><a style='width:80px;padding:5px;background-color:#333;color:#fff'>Remove All</a>&nbsp;<input type='submit' style='padding:5px;width:80px' value='go'></td>
-</form>
-</tr>
-</table>
-
-<?php  
-   $url = '';
+         <td style='width:200px;text-align:right;'><a href='data.php' title='unselect all the filters' class='submit unselect'>unselect&nbsp;all</a>&nbsp;<input type='submit' class='submit' value='go'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        </form>
+        </tr>
+	</table>
+<? 
+   $url_add2 = '';
    foreach( $_GET as $key => $value ) {
    	    if( strtolower($value) != 'all' && $value !='' ) {
-   	    $url_add .="&" . $key . "=" . $value;
-}
-}
-?>
+   	    $url_add2 .="&" . $key . "=" . $value;
+	    }
+   }
 
-<div class='container' style="width:930px;margin-left:auto;margin-right:auto;text-align:right">
-<a href='download.php?output=kml<? echo $url_add; ?>'>KML</a>&nbsp;&nbsp;<a href='download.php?output=csv<? echo $url_add; ?>'>CSV</a>
-</div>
-<?php 
+
+
 $result = mysql_query($table_sql);
-if (mysql_num_rows($result) > 0) {
+$total_num_rows = mysql_num_rows($result);
+ if ( $total_num_rows > 0) {
 ?>
-
+<div class='container page_layout' style='height:75px; font-size:14px;'>
+   <b><? echo $total_num_rows; ?> reports found</b>
+<? if($_SESSION['user_id']) { ?> 
+   &nbsp;&nbsp;|&nbsp;&nbsp;<b>Download data</b>&nbsp;<a title='Download data below as KML' href='download.php?output=kml<? echo $url_add2; ?>'>KML</a>&nbsp;
+   (<a class='help_text' title="<? echo $kml_text; ?>" href='#'> ? </a>)&nbsp;&nbsp;|&nbsp;&nbsp;<a title='Download data below as CSV' href='download.php?output=csv<? echo $url_add2; ?>'>CSV</a>&nbsp;(<a class='help_text' title="<? echo $csv_text; ?>" href='#'> ? </a>)
+<? } else { echo "&nbsp;&nbsp;|&nbsp;&nbsp;You must be logged in to download data"; }?><br><small>
+<b>Note</b>: Numbers and colours on the map indicate the number of unique locations from where sightings have been reported, aggregated over space; locations of the aggregate icons are very approximate. Zoom in to see exact sighting locations</small>
+</div>
 <div class='container' style="width:930px;margin-left:auto;margin-right:auto;border-top:solid 1px #d95c15" id='tab-set'>
-<ul class='tabs'>
-<li><a href='#text1' class='selected'>map</a></li>
-<li><a href='#text2'>tabular</a></li>
-</ul>
-<div id='text1'>
-<input type="hidden" id="size" value="-1">
-<input type="hidden" id="zoom" value="-1">
-<input type="hidden" id="style" value="-1">
-<div id="map" style="width:930px;height:500px"></div>
-</div>
-<div id='text2'>
-<table id="table1" class="tablesorter" style="width:930px;margin-left:auto;margin-right:auto" cellpadding="3">
-<thead>
-<tr>
-<th>&nbsp;No</th>
-<th>Common Name</th>           
-<th>Location</th>
-<th style='width:30px'>Date</th>                        
-<th>Sighting type</th>
-<th>Count</th>
-<th>Reported by</th>
-<th>On behalf of</th>
-</tr>
-</thead>
-<tbody>
-<?php 
-$i=1;
-//$result = mysql_query($table_sql);
-list($startSeason,$endSeason) =  explode('-',$_GET['season']);
-//if (mysql_num_rows($result) > 0) {
-while ($row = mysql_fetch_array($result)) {
-print "<tr>";
-print "<td style='width:200px;'>".$row{'common_name'}."</td>";
-print "<td style='width:200px;'>".$row{'location_name'}.", ".$row{'city'}.", ".$row{'state'}."</td>";
-print "<td style='width:150px'>".date("d-m-Y",strtotime($row{'sighting_date'}))."</td>";
-print "<td>" . ucfirst($row{'obs_type'}) . "</td>";
-($row['number'] > 0 ) ? print "<td>".$row{'number'}."</td>" : print "<td> -- </td>";
-print "<td>".$row{'user_name'}."</td>";
-print "<td style='border-right:0.5px solid #ffcb1a'>".$row{'user_friend'}."</td>";
-print "</tr>";
-$i++;
-}
-?>
-</tbody>
-</table>
-<div id="pager" class="column span-7" style="" >
-<form name="" action="" method="post">
-<table >
-<tr>
-<td><img src='pager/icons/first.png' class='first'/></td>
-<td><img src='pager/icons/prev.png' class='prev'/></td>
-<td><input type='text' size='8' class='pagedisplay'/></td>
-<td><img src='pager/icons/next.png' class='next'/></td>
-<td><img src='pager/icons/last.png' class='last'/></td>
-<td>
-<select class='pagesize'>
-<option selected='selected'  value='10'>10</option>
-<option value='20'>20</option>
-<option value='30'>30</option>
-<option  value='40'>40</option>
-</select>
-</td>
-</tr>
-</table>
-</form>
-</div>
-</div>
-</div>
-<?php 
-} 
-else 
-{
-?> 
+   <ul class='tabs'>
+   
+           <li style='margin-left:0'><a href='#text1' class='selected'>map</a></li>
+           <li style='margin-left:0'><a href='#text2'>tabular</a></li>
+ 
+   </ul>
+   <div id='text1'>
+              <div id="map" style="width:930px;height:500px;">Loading maps. This might take some time</div><br><br>
+  </div>
 
-<div class='container notice' style="width:900px;margin-left:auto;margin-right:auto;">no results</div>
-<?php 
-}
+  <div id='text2'>
+     <table id="table1" class="tablesorter">
+                <thead>
+                        <tr>
+                                <th style="width:50px">&nbsp;No</th>
+                                <th style='width:200px;'>Common Name</th>           
+                                <th style='width:200px'>Location</th>
+                                <th style='width:100px'>Date</th>                        
+				<!--<th style='width:50px'>Count</th>-->
+                                <th style='width:200px'>Reported by</th>
+                    
+                        </tr>
+                </thead>
+                <tbody>
+     <?
+	$i=1;
+	list($startSeason,$endSeason) =  explode('-',$_GET['season']);
+	//if (mysql_num_rows($result) > 0) {
+           $result = mysql_query($table_sql);
+	   while ($row = mysql_fetch_array($result)) {
+	             print "<tr>";
+                        print "<td style='text-align:center'><a href='sighting.php?id=" . $row{'id'} ."'>" . $i . "</a></td>";
+	                print "<td>".$row{'species_search_names'}."</td>";
+                        print "<td>".$row{'location_name'}.", ".$row{'city'}.", ".$row{'state'}."</td>";
+                        print "<td>".$row{'last_observation_date'}."</td>"; 
+		        //print "<td>" . ucfirst($row{'obs_type'}) . "</td>";
+                       // ($row['number'] > 0 ) ? print "<td>".$row{'number'}."</td>" : print "<td> -- </td>";
+                        print "<td style='border-right:solid 1px #ffcb1a'>".$row{'full_name'}."</td>";
+                        print "</tr>";
+                        $i++;
+           }
 ?>
+     </tbody>
+     </table>
+       <div id="pager" class="column span-7" style="" >
+                        <form name="" action="" method="post">
+                                <table >
+                                <tr>
+                                        <td><img src='pager/icons/first.png' class='first'/></td>
+                                        <td><img src='pager/icons/prev.png' class='prev'/></td>
+                                        <td><input type='text' size='8' class='pagedisplay'/></td>
+                                        <td><img src='pager/icons/next.png' class='next'/></td>
+                                        <td><img src='pager/icons/last.png' class='last'/></td>
+                                        <td>
+                                                <select class='pagesize'>
+                                                        <option selected='selected'  value='10'>10</option>
+                                                        <option value='20'>20</option>
+                                                        <option value='30'>30</option>
+                                                        <option  value='40'>40</option>
+                                                </select>
+                                        </td>
+                                </tr>
+                                </table>
+                        </form>
+                </div>
+
+       </div>
+
 </div>
+<? } else { ?>
+
+<div class='container notice' style="width:900px;margin-left:auto;margin-right:auto;">No results</div>
+<? } 
+//include("credits.php"); 
+?>
+
+</div>
+
+</div>
+</div>
+
+<div class="container bottom">
+
+</div>
+<? include("tab_include.php"); ?>
 <script type='text/javascript'>
+$().ready(function() {
 
-			$().ready(function() {
+var state_val = $('#state').val();
 
-            $("#species").autocomplete("autocomplete_reports.php", {
-                width: 260,
-                selectFirst: false,
-                matchSubset :0,
-                mustMatch: true,
-                            
-           });
+$('#species').emptyonclick();
+$('#location').emptyonclick();
 
-         $("#species").result(function(event , data, formatted) {
-                if (data)
-						
-                  document.getElementById('species_hidden').value = data[1];
-                  
-						
-          });
-
-
-         $('#location').autocomplete("auto_miglocations.php", {
-                width: 495,
-                selectFirst: false,
-                matchSubset :0,
-                mustMatch: true,
-                  //formatItem:formatItem
-                 
-          });
-
-         $("#location").result(function(event , data, formatted) {
-                if (data)
-                  document.getElementById('location_hidden').value = data[1];
-                  
-                          
-         });
+$("#species").autocomplete("autocomplete_reports.php", {
+  width: 260,
+  selectFirst: false,
+  matchSubset :0,
+  mustMatch: true,                          
 });
 
-</script>
+$("#species").result(function(event , data, formatted) {
+  if (data) {
+	 document.getElementById('species_hidden').value = data[1];
+  }
+});
 
-<script type="text/javascript">
+
+
+$('#location').autocomplete("auto_location_watchlist.php", {
+   width: 400,
+   selectFirst: false,
+   matchSubset :0,
+   cache:false,
+   mustMatch: true,
+   extraParams: {state: function() { return $("#state").val(); } },
+});
+
+$("#location").result(function(event , data, formatted) {
+   if (data) {
+	document.getElementById('location_hidden').value = data[1];
+   }
+});
+});
+
+
 function get_remove(parameter) {
-
-<? if($_GET['type']){
+<? 
+if($_GET['type']){
    $remove_type = $_GET['type'];
-   }
+}
   
-   if($_GET['species']){
-      $remove_species = $_GET['species'];
-   }
+if($_GET['species']){
+   $remove_species = $_GET['species'];
+}
 
-   if($_GET['user']){
+if($_GET['user']){
    $remove_user = $_GET['user'];
-   }
+}
    
-   if($_GET['state']){
-      $remove_state = $_GET['state'];
-   }
+if($_GET['state']){
+   $remove_state = $_GET['state'];
+}
 
-   if($_GET['location']){
+if($_GET['location']){
    $remove_location = $_GET['location'];
-    }
+}
 
-    if($_GET['season']){
+if($_GET['season']){
    $remove_season = $_GET['season'];
-    }
+}
 
 ?>
 var remove_season = '<? echo $remove_season; ?>';
@@ -701,64 +514,50 @@ var remove_user = '<? echo $remove_user; ?>';
 var remove_state = '<? echo $remove_state; ?>';
 var remove_location = '<? echo $remove_location; ?>';
 
-  if ( parameter == 'season') {
-    
-     remove_season = '<? echo getCurrentSeason(); ?>';
-     alert(remove_season);
-   }
-
-
-   if ( parameter == 'type') {
-      remove_type = 'All';
-     }
-
-    if (parameter == 'species') {
-       remove_species = 'All'; 
-     }
-
-     if (parameter == 'user') {
-     remove_user = 'All'; 
-       
-     
-     }
-
- 
-
-    if (parameter == 'location') {
-      remove_location = 'All';
-       }
-
-   if ( parameter == 'state') {
-    remove_state = 'All'; 
-
-
-
-  } 
-
-  var url = "data.php?season=" + remove_season + "&type=" + remove_type + "&species=" + remove_species + "&user=" + remove_user + "&state=" + remove_state + "&location=" + remove_location;
- 
-  
-  window.location = url;
+if ( parameter == 'season') {
+   remove_season = 'All';
 }
-</script>
 
-<script language="javascript">
+if ( parameter == 'type') {
+   remove_type = 'All';
+}
 
-        function formatItem(row) {
-            var completeRow;
-            completeRow = new String(row);
-            var scinamepos = completeRow.lastIndexOf("(");
-            var rest = substr(completeRow,0,scinamepos);
-            var sciname = substr(completeRow,scinamepos);
-            var commapos = sciname.lastIndexOf(",");
-            sciname = substr(sciname,0,commapos);
-            var newrow = rest + ' <i>' + sciname + '</i>';
-            return newrow;
-        }
+if (parameter == 'species') {
+    remove_species = 'All'; 
+}
 
-        function isEmpty(s)
-        {   return ((s == null) || (s.length == 0))
-        }
+if (parameter == 'user') {
+    remove_user = 'All'; 
+}
+
+if (parameter == 'location') {
+    remove_location = 'All';
+}
+
+if ( parameter == 'state') {
+    remove_state = 'All'; 
+} 
+
+var url = "data.php?season=" + remove_season + "&type=" + remove_type + "&species=" + remove_species + "&user=" + remove_user + "&state=" + remove_state + "&location=" + remove_location;
+
+window.location = url;
+}
+
+function formatItem(row) {
+    var completeRow;
+    completeRow = new String(row);
+    var scinamepos = completeRow.lastIndexOf("(");
+    var rest = substr(completeRow,0,scinamepos);
+    var sciname = substr(completeRow,scinamepos);
+    var commapos = sciname.lastIndexOf(",");
+    sciname = substr(sciname,0,commapos);
+    var newrow = rest + ' <i>' + sciname + '</i>';
+    return newrow;
+}
+
+function isEmpty(s){   
+    return ((s == null) || (s.length == 0))
+}
 
         // BOI, followed by one or more whitespace characters, followed by EOI.
         var reWhitespace = /^\s+$/
@@ -775,40 +574,7 @@ var remove_location = '<? echo $remove_location; ?>';
         {   // Is s empty?
             return (isEmpty(s) || reWhitespace.test(s));
         }
-        function formReset(){
-            document.rpt_l1.target = "";
-            document.rpt_l1.action = "rpt_level1.php";
-        }
-
-        function showReport(){
-            document.rpt_l1.target = "blank";
-            document.rpt_l1.action = "rpt_level1_excel.php";
-            document.rpt_l1.submit();
-            document.rpt_l1.target = "";
-        }
-
-
-        function validate(){
-            if(isWhitespace(document.frm_chpass.opwd.value))
-            {
-                alert('Please enter old password');
-                return false;
-            }
-
-
-            if(document.frm_chpass.pwd.value != document.frm_chpass.pwd1.value){
-                alert("The new passwords dont match. Please re-enter.");
-                return false;
-            }
-
-            if(document.frm_chpass.pwd.value.length < 6){
-                alert("The new password should be atleast 6 characters long.");
-                return false;
-            }
-
-            return true;
-
-        }
+        
 
         function substr( f_string, f_start, f_length ) {
             // http://kevin.vanzonneveld.net
@@ -833,15 +599,25 @@ var remove_location = '<? echo $remove_location; ?>';
             }
 
             return f_string.slice(f_start,f_length);
-        }
+        }    
+</script>
+<? include("footer.php"); ?>
+<script type="text/javascript">
+        $(function() { 
 
-        
+             $("#table1")
+                .tablesorter({  headers: { 
+                   5: { sorter: false }, 6: { sorter: false }, 7 : { sorter: false }, 8: { sorter: false } },widthFixed: true, widgets: ['zebra']})
+                   .tablesorterPager({container: $("#pager"), positionFixed: false});
 
-        
-	    
-    </script>
-
-
-<div class="container bottom"></div>
+              $("#table2")
+                .tablesorter({widthFixed: true, widgets: ['zebra']})
+                .tablesorterPager({container: $("#pager2"), positionFixed: false});
+                     
+        });
+    </script> 
+table
 </body>
 </html>
+
+

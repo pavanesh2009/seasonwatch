@@ -1,20 +1,15 @@
+<?php
+   $page_title="SeasonWatch";
+   include("main_includes.php");
+?>
 
 <html>
 <head>
-<title>Thank you</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<?php 
-include("header_head.php");
-?>
 </head>
 
 <body>
-<link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print">
-<link rel="stylesheet" href="blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
-<link href="./css/styles_new.css" rel="stylesheet" type="text/css">
 <?php 
-include("header_body.php");
+include("header.php");
 ?>
 <div class="container first_image" style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;">
 <table>
@@ -84,5 +79,8 @@ include("header_body.php");
 </div>
 <div class="container bottom">
 </div>
+<?php 
+   include("footer.php");
+?>
 </body>
 </html>

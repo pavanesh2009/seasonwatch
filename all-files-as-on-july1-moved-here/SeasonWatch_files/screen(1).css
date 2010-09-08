@@ -1,0 +1,21 @@
+P + P {
+	MARGIN-TOP: -1.5em; TEXT-INDENT: 2em
+}
+FORM P + P {
+	TEXT-INDENT: 0px
+}
+.alt {
+	FONT-WEIGHT: normal; COLOR: #666; FONT-STYLE: italic; FONT-FAMILY: "Warnock Pro", "Goudy Old Style","Palatino","Book Antiqua", Georgia, serif
+}
+.dquo {
+	MARGIN-LEFT: -0.5em
+}
+P.incr {
+	FONT-SIZE: 10px; MARGIN-BOTTOM: 1.5em; LINE-HEIGHT: 1.44em
+}
+.incr P {
+	FONT-SIZE: 10px; MARGIN-BOTTOM: 1.5em; LINE-HEIGHT: 1.44em
+}
+.caps {
+	PADDING-RIGHT: 2px; PADDING-LEFT: 2px; FONT-WEIGHT: bold; FONT-SIZE: 1.2em; PADDING-BOTTOM: 0px; TEXT-TRANSFORM: lowercase; LINE-HEIGHT: 1%; PADDING-TOP: 0px; LETTER-SPACING: 1px; FONT-VARIANT: small-caps
+}

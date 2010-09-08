@@ -1,14 +1,9 @@
-<?php 
-include_once './includes/dbc.php';
-page_protect();
-?> 
+<? 
+   session_start();
+   $page_title="SeasonWatch";
+   include("main_includes.php");
+?>
 
-<!--Displaying data into dropdown -->
-<html>
-<head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8" >
-<title>Add Tree page</title>
-<link href="./css/styles.css" rel="stylesheet" type="text/css">
 <script type="text/javascript">
 function getXMLHTTP() { //fuction to return the xml http object
 		var xmlhttp=false;	
@@ -69,7 +64,7 @@ function getfamily(species_id1) {
 	//alert("primary_name=" + species_id1 );		
 	var strURL="findfamily.php?primary_name="+species_id1;
 	var req = getXMLHTTP();
-if (req) {   req.onreadystatechange = function() {
+if (req) {   req.onreadystatechange = function() {
 	if (req.readyState == 4) {
 	// only if "OK"
 	if (req.status == 200) {						
@@ -95,7 +90,7 @@ document.species.tree_desc.value ="";
 function getlocname() {
 //alert('in getlocname');
 	var req = getXMLHTTP();
-if (req) {   req.onreadystatechange = function() {
+if (req) {   req.onreadystatechange = function() {
 	if (req.readyState == 4) {
 	// only if "OK"
 	if (req.status == 200) {						
@@ -112,39 +107,7 @@ else {
 }
 </script>
 
-<link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print">
-<link rel="stylesheet" href="blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
-<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="js/jquery.validate.js"></script>
-<link rel="stylesheet" href="css/styles_new.css" type="text/css"></link>
-<link type="text/css" rel="stylesheet" href="js/thickbox/thickbox.css"></link>
-<script language="javascript" src="js/thickbox/thickbox.js"></script>
-<script type='text/javascript' src='js/jquery.autocomplete.js'></script>
-<link rel="stylesheet" type="text/css" href="js/jquery.autocomplete.css" />
-
-
-<!-- for tree location Auto complete features
-<script type="text/javascript">
-$().ready(function() {
-	$("#treelocationname").autocomplete("getlocation.php", {
-		width: 260,
-		matchContains: true,
-		selectFirst: false
-	});
-	 $("#treelocationname").result(function(event, data, formatted) {
-    $("#treelocationid").val(data[1]);
-      });
-   	});
-</script>--> 
-
-<link rel="stylesheet" href="tooltip/jquery.tooltip.css" />
-<link rel="stylesheet" href="tooltip/demo/screen.css" />
-<script src="tooltip/lib/jquery.dimensions.js" type="text/javascript"></script>
-<script src="tooltip/jquery.tooltip.js" type="text/javascript"></script>
-<script src="tooltip/lib/jquery.bgiframe.js" type="text/javascript"></script>
-<script src="tooltip/chili-1.7.pack.js" type="text/javascript"></script>
-<script type="text/javascript">
+<!--<script type="text/javascript">
 $(function() {
 $('#tooltiptest a').tooltip({
 	track: true,
@@ -154,23 +117,15 @@ $('#tooltiptest a').tooltip({
 	fade: 250
 });
 });
-</script>
+</script>-->
 
 
 
 
-<!--for emptyonclick-->
-<script type="text/javascript" src="js/jquery.emptyonclick.js"></script>
-<script type="text/javascript">
-$(document).ready(function(){
-    $('.emptyonclick').emptyonclick();
-});
-</script>
 
 <script type="text/javascript">
 function validate_form(thisform)
 {
-
 var height;
 height = document.getElementById("tree_height").value;
 var girth;
@@ -179,8 +134,8 @@ var distance;
 distance = document.getElementById("distance_from_water").value;
 var slope;
 slope = document.getElementById("degree_of_slope").value;
-
-
+var nick_name;
+nick_name = document.getElementById("tree_nickname").value;
 
 
 if (height != '' )
@@ -225,7 +180,6 @@ else{
 }
 } 
 
-
 if(slope != '' )
 {
 var numericslope= /^[0-9]+$/;
@@ -239,6 +193,18 @@ document.getElementById("degree_of_slope").focus();
 return false;
 }
 } 
+
+
+for (i=0; i <= document.species.nicknames.length - 1;i++)
+{
+if(nick_name == document.species.nicknames[i].text )
+{
+	alert("Nick name should be unique. Please change the nick name.");
+	document.getElementById("tree_nickname").focus();
+	return false;
+}
+}
+
 
 return true;
 }
@@ -257,15 +223,11 @@ alert("in setLocation");
 }
 </script> -->
 
-<?php
-include ("contribheader_head.php");
-?>
-</head>
 
 <!--<?php
 if ($_POST['speciesid'] == undefined)
 {
-$query=mysql_query("SELECT species_id FROM Species_master ORDER BY species_id ASC limit 1");
+$query=mysql_query("SELECT species_id FROM species_master ORDER BY species_id ASC limit 1");
 while($row = mysql_fetch_array($query))
 $speciesid=mysql_insert_id();	
 }
@@ -280,9 +242,14 @@ $speciesid=$_SESSION['speciesid'];
 ?>
 <body onLoad="getspecies_scientific_name(<? echo $_SESSION['speciesid'];?>);getfamily(<? echo $_SESSION['speciesid']; ?>);" onfocus="getlocname();">
 <?php
-include ("contribheader_body.php");
+include ("header.php");
 ?>
 <div class="container first_image" style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;">
+   <div id='tab-set'>   
+     <ul class='tabs'>
+        <li><a href='#x' class='selected'>add tree</a></li>
+    </ul>
+   </div>
 <table>
 <tbody>
 <tr>
@@ -321,7 +288,7 @@ include ("contribheader_body.php");
 <td width="150">Primary Common Name<font color="#CC0000">*</font></td>
 <td  width="150">
 <?php
-$sql = mysql_query("SELECT species_id,species_primary_common_name FROM Species_master WHERE species_id='$_SESSION[speciesid]'");
+$sql = mysql_query("SELECT species_id,species_primary_common_name FROM species_master WHERE species_id='$_SESSION[speciesid]'");
 while($row=mysql_fetch_array($sql))
 {
 if ($row['species_id'] == $speciesid)
@@ -366,20 +333,14 @@ else
 <!-- <input type="text" id="treelocationname" readonly="readonly" class="required" name="treelocationname" autocomplete="off" style="width:200px;" 
 onfocus="setLocation();"></input> -->
 <!--<div id="treelocationname">-->
-<input type="text" id="treelocationname" name="treelocationname" readonly="readonly" class="required" name="treelocationname" autocomplete="off" style="width:200px;"></input>
+<input type="text" id="treelocationname" name="treelocationname" readonly="readonly" disabled class="required" name="treelocationname" autocomplete="off" style="width:200px;"></input>
 <!--</div>-->
 <!-- "<?php 
 //echo $_SESSION['treelocation'];
 //unset($_SESSION['treelocation']);
 ?>" -->
- </td>
-</tr>
-
-<tr> 
-<td align=right></td>
-<td>
-<a style="font-size: 13px;" title="Add a new location" class="thickbox" href="addnewlocation.php?&amp;height=450&amp;width=800&amp;TB_iframe=true">
-Add a new location</a>
+<a style="font-size: 13px;" title="Add a new location" class="thickbox" href="addnewlocation.php?&amp;height=500&amp;width=800&amp;TB_iframe=true">
+Choose from a map</a>
 &nbsp;<div1 id="tooltiptest">
 <a title="Use a map to tell us where your tree is" href="#">(?)</a>
 </div>
@@ -404,10 +365,19 @@ Add a new location</a>
 </td>
 </tr> 
 
+<?php
+$sql = mysql_query("SELECT tree_nickname FROM user_tree_table WHERE user_id='$_SESSION[user_id]'");
+echo "<select name='nicknames' id='nicknames' style='visibility:hidden;'>";
+while($row=mysql_fetch_array($sql))
+{
+echo "<option>".$row['tree_nickname']."</option>";
+}
+echo "</select>";
+?>
 
 <tr> 
 <td align=right>Tree Nickname<font color="#CC0000">*</font></td>
-<td><input type="text" name="tree_nickname" class="required" style="width:200px;">
+<td><input type="text" id="tree_nickname" name="tree_nickname" class="required" style="width:200px;">
 <div1 id="tooltiptest">
 <a title="Please give all your trees a unique nickname. This will help you distinguish your individual trees (e.g. “Home_Neem” from “Street_Neem”) later at the time of adding observations." href="#">(?)</a>
 </div>
@@ -441,6 +411,9 @@ Add a new location</a>
 <input type="radio" class="radio" name="tree_damage" value="1" /> Yes
 &nbsp;
 <input type="radio" class="radio" name="tree_damage" value="2" /> No
+<div1 id="tooltiptest">
+<a title="Please make a note of any apparent infections by fungus, bacteria or worms on the tree. Also note if you find that the tree has been lopped." href="#">(?)</a>
+</div>
 <br/>
 </td>
 </tr>
@@ -452,6 +425,9 @@ Add a new location</a>
 <input type="radio" class="radio" name="is_fertilised" value="1" /> Yes
 &nbsp;
 <input type="radio" class="radio" name="is_fertilised" value="2" /> No
+<div1 id="tooltiptest">
+<a title="Many trees in parks, gardens and campuses are regularly fertilized – this affects the phenology of the tree and therefore must be noted." href="#">(?)</a>
+</div>
 <br/>
 </td>
 </tr>
@@ -463,6 +439,9 @@ Add a new location</a>
 <input type="radio" class="radio" name="is_watered" value="1" /> Yes
 &nbsp;
 <input type="radio" class="radio" name="is_watered" value="2" /> No
+<div1 id="tooltiptest">
+<a title="Many trees in parks, gardens and campuses are regularly watered – this affects the phenology of the tree and therefore must be noted." href="#">(?)</a>
+</div>
 <br/>
 </td>
 </tr>
@@ -513,17 +492,40 @@ Add a new location</a>
 
 <tr> 
 <td align=right>Tree Description</td>
-<td><textarea id="tree_desc" name="tree_desc" cols="40" rows="5" class="emptyonclick">
+<td><textarea id="tree_desc" class="emptyonclick" name="tree_desc" cols="40" rows="5" autocomplete="off" onClick="document.getElementById('tree_desc').innerHTML='';">
 Enter your comments here
 </textarea><br> </td>
 </tr>
 
 <tr> 
 <td align=right>Other Notes</td>
-<td><textarea id="other_notes" name="other_notes" class="emptyonclick" >
+<td><textarea id="other_notes" name="other_notes" class="emptyonclick"  onClick="document.getElementById('other_notes').innerHTML='';">
 Enter your comments here
 </textarea><br> </td>
 </tr>
+<?php
+if ($_SESSION[group_role]=='coord')
+{
+?>
+<tr> 
+<td align=right>Group Member to Assign Tree to<font color="#CC0000">*</font></td>
+<td>
+<?php
+$sql = mysql_query("SELECT full_name, user_id FROM users WHERE group_id='$_SESSION[group_id]' ORDER BY user_id;");
+echo "<select name='assigned_user' id='assigned_user' class='required'>";
+echo "<option value='' selected>Select a Group member</option>";
+while($row=mysql_fetch_array($sql))
+{
+	echo "<option value=".$row['user_id'].">".$row['full_name']."</option>";
+}
+echo "</select>";
+?>
+<div1 id="tooltiptest">
+<a title="Please assign this tree to the group member you want this tree to be observed by." href="#">(?)</a>
+</div>
+</td>
+</tr>
+<? } ?>
 </table>
 
 <p align="center">
@@ -539,6 +541,10 @@ Enter your comments here
 </div>
 </div>
 <div class="container bottom">
+<?php mysql_close($link);?>
 </div>
+<?php 
+   include("footer.php");
+?>
 </body>
 </html>

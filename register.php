@@ -11,6 +11,7 @@ from the user submitted form.
 *****************************************************************/
 foreach($_POST as $key => $value) {
 	$data[$key] = filter($value);
+//	echo $data[$key]."x";
 }
   
 /************************ SERVER SIDE VALIDATION **************************************/
@@ -19,62 +20,85 @@ foreach($_POST as $key => $value) {
 if(empty($data['full_name']) || strlen($data['full_name']) < 4)
 {
 $err = urlencode("ERROR: Invalid name. Please enter atleast 3 or more characters for your name");
-header("Location: register.php?msg=$err");
-exit();
+//header("Location: register.php?msg=$err");
+//exit();
 }
 
 
 
 // Validate User Name
-if (!isUserID($data['user_name'])) {
-$err = urlencode("ERROR: Invalid user name. It can contain alphabet, number and underscore.");
-header("Location: register.php?msg=$err");
-exit();
-}
+//elseif (!isUserID($data['user_name'])) {
+//$err = urlencode("ERROR: Invalid user name. It can contain alphabet, number and underscore.");
+//header("Location: register.php?msg=$err");
+//exit();
+//}
 
 // Validate Email
-if(!isEmail($data['usr_email'])) {
+elseif(!isEmail($data['usr_email'])) {
 $err = urlencode("ERROR: Invalid email.");
-header("Location: register.php?msg=$err");
-exit();
+//header("Location: register.php?msg=$err");
+//exit();
 }
 
 // Check User Passwords
-if (!checkPwd($data['pwd'],$data['pwd2'])) {
+elseif (!checkPwd($data['pwd'],$data['pwd2'])) {
 $err = urlencode("ERROR: Invalid Password or mismatch. Enter 3 chars or more");
-header("Location: register.php?msg=$err");
-exit();
+//header("Location: register.php?msg=$err");
+//exit();
 }
 	
 
 // Check User City/Town/Village Information 
-if (empty($data['city']))
+elseif (empty($data['city']))
 {
 $err = urlencode("ERROR: Please Enter your City name");
-header("Location: register.php?msg=$err");
-exit();
+//header("Location: register.php?msg=$err");
+//exit();
 }
 
 
 
 // Check User District Information 
-if (empty($data['dist'])) {
-$err = urlencode("ERROR: Please Enter your District name");
-header("Location: register.php?msg=$err");
-exit();
-}
+//elseif (empty($data['dist'])) {
+//$err = urlencode("ERROR: Please Enter your District name");
+//header("Location: register.php?msg=$err");
+//exit();
+//}
 
 
 // Check User State Information 
-if (empty($data['state'])) {
+elseif (empty($data['state'])) {
 $err = urlencode("ERROR: Please Choose your State");
-header("Location: register.php?msg=$err");
-exit();
+//header("Location: register.php?msg=$err");
+//exit();
 }
 
 
-
+else
+{
   
+
+$usr_email = $data['usr_email'];
+//$user_name = $data['user_name'];
+
+/************ USER EMAIL CHECK ************************************
+This code does a second check on the server side if the email already exists. It 
+queries the database and if it has any existing email it throws user email already exists
+*******************************************************************/
+
+$rs_duplicate = mysql_query("select count(*) as total from users where user_email='$usr_email'") or die(mysql_error());
+list($total) = mysql_fetch_row($rs_duplicate);
+
+if ($total > 0)
+{
+$err = "ERROR: This email id has already been used to register. Please try again with a different email id.";
+//header("Location: register.php?msg=$err");
+//exit();
+}
+}
+/***************************************************************************/
+if($err=='')
+{
 $user_ip = $_SERVER['REMOTE_ADDR'];
 
 // stores md5 of password
@@ -87,35 +111,16 @@ $path   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
 // Generates activation code simple 4 digit number
 //$activ_code = rand(1000,9999);
 
-$usr_email = $data['usr_email'];
-$user_name = $data['user_name'];
-
-/************ USER EMAIL CHECK ************************************
-This code does a second check on the server side if the email already exists. It 
-queries the database and if it has any existing email it throws user email already exists
-*******************************************************************/
-
-$rs_duplicate = mysql_query("select count(*) as total from users where user_email='$usr_email' OR user_name='$user_name'") or die(mysql_error());
-list($total) = mysql_fetch_row($rs_duplicate);
-
-if ($total > 0)
-{
-$err = urlencode("ERROR: The username/email already exists. Please try again with different username and email.");
-header("Location: register.php?msg=$err");
-exit();
-}
-/***************************************************************************/
-
 $sql_insert = "INSERT into `users`
   			(`full_name`,`user_email`,`pwd`,`address`,
   			`address1`,`address2`,`city`,`district`,`zip`,`landline_stdcode`,
-  			`landline_num`,`mobile`,`date`,`users_ip`,`state_id`,`user_name`
+  			`landline_num`,`mobile`,`date`,`users_ip`,`state_id`
 			)
 		    VALUES
 		    ('".addslashes($data[full_name])."','".addslashes($usr_email)."','$md5pass',
 		    '".addslashes($data[address])."','".addslashes($data[address1])."','".addslashes($data[address2])."',
 		    '".addslashes($data[city])."','".addslashes($data[dist])."','".addslashes($data[zip])."','".addslashes($data[landline_stdcode])."','".addslashes($data[landline_num])."',
-		    '".addslashes($data[mobile])."',now(),'$user_ip','$data[state]','".addslashes($user_name)."')
+		    '".addslashes($data[mobile])."',now(),'$user_ip','$data[state]')
 			";
 
 mysql_query($sql_insert,$link) or die("Insertion Failed:" . mysql_error());
@@ -125,28 +130,31 @@ mysql_query("update users set md5_id='$md5_id' where user_id='$user_id'");
 //echo "<h3>Thank You</h3> We received your submission.";
 
 $message = 
-"Thank you for registering with NCBS. Here are your login details...\n
+"Dear $data[full_name],
 
-User ID: $user_name
-Email: $usr_email \n 
-Passwd: $data[pwd] \n
+Thank you for registering with SeasonWatch. Here are your login details...
 
-// Activation code: $activ_code \n 
+Email: $usr_email (the email id also serves as the username to login) \n
+Passwordd: $data[pwd] \n
 
-*****ACTIVATION LINK*****\n
-//http://$host$path/activate.php?user=$md5_id&activ_code=$activ_code
+Should you forget your password, please go to http://seasonwatch.in/ and click on 'forgot?' in the top right corner. A new password will be sent to your email address.
 
-Thank You
+By registering with SeasonWatch, you are joining volunteers from all across the country in tracking how the changing climate is affecting seasonal events. By monitoring the timing of flowering, fruiting and leafing of your chosen tree(s), you can make a tremendous contribution!
 
-Administrator
-$host_upper
-______________________________________________________
+Please do get in touch with us at sw@seasonwatch.in if you need help participating or have suggestions for improvements.
+
+Thank you for your interest and participation!
+The SeasonWatch Team
+
+http://seasonwatch.in  |  sw@seasonwatch.in
+
+_____________________________________________________
 THIS IS AN AUTOMATED RESPONSE. 
 ***DO NOT RESPOND TO THIS EMAIL****
 ";
 
 	mail($usr_email, "Login Details", $message,
-    "From: \"Member Registration\" <auto-reply@$host>\r\n" .
+    "From: \"SeasonWatch Member Registration\" <auto-reply@$host>\r\n" .
      "X-Mailer: PHP/" . phpversion());
 
 
@@ -160,7 +168,7 @@ Download here: http://phpmailer.sourceforge.net
 ********************************************************************************/
 
 /*
-require("class.phpmailer.php");
+require("includes/class.phpmailer.php");
 
 $mail = new PHPMailer();
 
@@ -181,18 +189,17 @@ $mail->WordWrap = 50;
 
 $mail->Send();
 */
+
   header("Location: thankyou.php");  
   exit();
-	 
-	 } 
+}	 
+} 
 ?>
-
-<html>
-<head>
-<title>SeasonWatch : Register</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<script language="JavaScript" type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<script language="JavaScript" type="text/javascript" src="js/jquery.validate.js"></script>
+<? 
+   session_start();
+   $page_title="SeasonWatch";
+   include("main_includes.php");
+?>
 
   <script>
   $(document).ready(function(){
@@ -203,18 +210,9 @@ $mail->Send();
     $("#regForm").validate();
   });
   </script>
-<?php 
-include("header_head.php");
-?>
 </head>
 
 <body>
-<link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection"></link>
-<link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print"></link>
-<link rel="stylesheet" href="blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection"></link>
-<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="js/jquery.validate.js"></script>
-<link rel="stylesheet" href="css/styles_new.css" type="text/css"></link>
 <link type="text/css" href="css/register.css" rel="stylesheet"></link>
 
 <style>
@@ -222,7 +220,7 @@ include("header_head.php");
 </style>
 
 <?php 
-include("header_body.php");
+include("header.php");
 ?>
 
 <div class="container first_image" style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;">
@@ -248,7 +246,7 @@ include("header_body.php");
       <p>&nbsp;</p>
       <p>&nbsp;</p></td> 
 
-    <td width="732" valign="top"><p>
+    <td width="932" valign="top"><p>
 	
 <? 
 	 if (isset($_GET['done'])) {
@@ -259,12 +257,20 @@ include("header_body.php");
 	
 	
 	</p>
+	<table><tr>
+	<td width="150"></td><td>
       <h3 class="titlehdr">Participant Registration Form</h3>
-      <p>Please register a free account,Please note that fields marked <span class="required">*</span> 
+      <p>Please register a free account. Please note that fields marked <span class="required">*</span> 
         are required.</p>
+	</td>
+	<td width="30"></td>
+	<td class="sidebar" style="-moz-border-radius-topleft: 10px; -moz-border-radius-topright: 10px; -moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;">
+			<h5>For <a href="school_register.php">School Registration click here</a>.</h5>
+     </td>
+	 </tr></table>
 	 <?	
-      if (isset($_GET['msg'])) {
-	  $msg = mysql_real_escape_string($_GET['msg']);
+      if ($err!='') {
+	  $msg = mysql_real_escape_string($err);
 	  echo "<div class=\"notice\">$msg</div>";
 	  }
 	  if (isset($_GET['done'])) {
@@ -283,26 +289,26 @@ include("header_body.php");
 </tr>
 
 <tr>
-<td>Your Full Name</td>
+<td>Your Full Name<span class="required"><font color="#CC0000">*</font></span></td>
 <td>
 <input name="full_name" type="text" id="full_name" value="<?php echo $_POST['full_name'];?>"  size="40" class="required"/>
 </td>
 </tr>
 
-<tr> 
+<!--<tr> 
 <td>Username<span class="required"><font color="#CC0000">*</font></span></td>
-<td><input name="user_name" type="text" id="user_name" class="required username" minlength="5" > 
+<td><input name="user_name" type="text" id="user_name"  value="<?php echo $_POST['user_name'];?>" class="required username" minlength="5" > 
 <input name="btnAvailable" type="button" id="btnAvailable" 
 onclick='$("#checkid").html("Please wait..."); $.get("checkuser.php",{ cmd: "check", user: $("#user_name").val() } ,function(data){  $("#checkid").html(data); });'
 value="Check Availability"> 
 <span style="color:red; font: normal 12px verdana; " id="checkid" ></span> 
 </td>
-</tr>
+</tr>-->
 
 <tr> 
 <td>Email Address<span class="required"><font color="#CC0000">*</font></span> 
 </td>
-<td><input name="usr_email" type="text" id="usr_email3" class="required email" autocomplete="off"> 
+<td><input name="usr_email" type="text" id="usr_email3"  value="<?php echo $_POST['usr_email'];?>" class="required email" autocomplete="off"> 
 <!-- <span class="example">* Please enter a Valid email</span> -->
 </td>
 </tr>
@@ -322,31 +328,31 @@ value="Check Availability">
 <tr>
 <td align="right">Mailing Address </td>
 <td>
-<input type="text" name="address" id="address"/>
+<input type="text" name="address"  value="<?php echo $_POST['address'];?>" id="address"/>
 </td>
 </tr>
 <tr>
 <td align="right">Address (line 2) (optional)</td>
 <td>
-<input type="text" name="address1"/>
+<input type="text" name="address1" value="<?php echo $_POST['address1'];?>" />
 </td>
 </tr>
 <tr>
 <td align="right">Address (line 3) (optional)</td>
 <td>
-<input type="text" name="address2"/>
+<input type="text" name="address2" value="<?php echo $_POST['address2'];?>" />
 </td>
 </tr>
 <tr>
 <td align="right">City/Town/Village<font color="#CC0000">*</font></td>
 <td>
-<input type="text" id="city" name="city" class="required"/>
+<input type="text" id="city" name="city"  value="<?php echo $_POST['city'];?>" class="required"/>
 </td>
 </tr>
 <tr>
-<td align="right">District<font color="#CC0000">*</font> </td>
+<td align="right">District</td>
 <td>
-<input type="text" id="dist" name="dist" class="required"/>
+<input type="text" id="dist" name="dist"  value="<?php echo $_POST['dist'];?>"/>
 </td>
 </tr>
 <tr>
@@ -367,14 +373,14 @@ echo "</select>";
 <tr>
 <td>Country</td>
 <td>
-<input class="" type="text" value="India" name="country"/>
+<input class="" type="text" value="India" name="country"  value="<?php echo $_POST['country'];?>" />
 </td>
 </tr>
 
 <tr>
 <td align="right">Post code (PIN code)</td>
 <td>
-<input type="text" name="zip"/>
+<input type="text" name="zip" value="<?php echo $_POST['zip'];?>" />
 </td>
 </tr>
 
@@ -383,14 +389,14 @@ echo "</select>";
 <td align="right">Landline phone</td>
 <td align="left">
 STD<input type="text" name="landline_stdcode" style="width: 50px;"/>
-&nbsp;-&nbsp;<input type="text" name="landline_num" style="width:108px;"/>
+&nbsp;-&nbsp;<input type="text" name="landline_num"  value="<?php echo $_POST['landline_num'];?>" style="width:108px;"/>
 </td>
 </tr>
 
 <tr>
 <td align="right">Mobile</td>
 <td>
-<input type="text" name="mobile"/>
+<input type="text" name="mobile" value="<?php echo $_POST['mobile'];?>" />
 </td>
 </tr>
 
@@ -402,7 +408,6 @@ STD<input type="text" name="landline_stdcode" style="width: 50px;"/>
 <input type=reset  value="Cancel"  class=buttonstyle onclick="javascript:window.location.href='index.php';">
 </p>
 </form>
-<p align="right"><span style="font: normal 9px verdana">Seasonwatch Page <a href="http://www.ncbs.res.in/"> NCBS </a></span></p>
 </td>
 <td width="196" valign="top">&nbsp;</td>
 </tr>
@@ -416,5 +421,8 @@ STD<input type="text" name="landline_stdcode" style="width: 50px;"/>
 </div> 
 <div class="container bottom"> </div>
 <?php mysql_close($link);?>
+<?php 
+   include("footer.php");
+?>
 </body>
 </html>

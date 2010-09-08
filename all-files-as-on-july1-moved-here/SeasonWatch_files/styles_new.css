@@ -1,0 +1,135 @@
+.error_top {
+	PADDING-RIGHT: 20px; PADDING-LEFT: 20px; FONT-WEIGHT: bold; FONT-SIZE: 14px; WIDTH: 400px; COLOR: #333; BACKGROUND-COLOR: #ffcb1a; TEXT-ALIGN: center
+}
+.top {
+	BACKGROUND-POSITION: left top; BACKGROUND-IMAGE: url(../seasonwatch/images/pagetopstrip.png); MARGIN-LEFT: auto; WIDTH: 990px; MARGIN-RIGHT: auto; PADDING-TOP: 30px; BACKGROUND-REPEAT: no-repeat; BACKGROUND-COLOR: #fff
+}
+.left {
+	BACKGROUND-IMAGE: url(../seasonwatch/images/lefttorightfullpage.png); MARGIN-LEFT: -1px; BACKGROUND-REPEAT: repeat-y
+}
+.bottom {
+	BACKGROUND-IMAGE: url(../seasonwatch/images/pagebottomstrip.png); MARGIN-LEFT: auto; WIDTH: 990px; MARGIN-RIGHT: auto; PADDING-TOP: 30px; BACKGROUND-REPEAT: no-repeat; BACKGROUND-COLOR: #fff
+}
+#password-clear {
+	DISPLAY: none; COLOR: #666
+}
+.login-box {
+	BORDER-RIGHT: #666 1px solid; PADDING-RIGHT: 0px; BORDER-TOP: #666 1px solid; PADDING-LEFT: 0px; MARGIN-LEFT: -4px; BORDER-LEFT: #666 1px solid; WIDTH: 180px; MARGIN-RIGHT: 0px; BORDER-BOTTOM: #666 1px solid
+}
+.first_image {
+	BACKGROUND-POSITION: left bottom; BACKGROUND-IMAGE: url(../seasonwatch/images/gradientbg.png); PADDING-BOTTOM: 5px; WIDTH: 950px; BACKGROUND-REPEAT: repeat-x; BACKGROUND-COLOR: #fffff9
+}
+HR {
+	MARGIN-TOP: 10px; BACKGROUND: #d95c15; MARGIN-BOTTOM: 10px
+}
+.map-show-link {
+	BORDER-RIGHT: #ccc 1px solid; PADDING-RIGHT: 2px; BORDER-TOP: medium none; MARGIN-TOP: 0px; PADDING-LEFT: 2px; FONT-WEIGHT: bold; FONT-SIZE: 12px; MARGIN-BOTTOM: 10px; PADDING-BOTTOM: 2px; MARGIN-LEFT: 8px; BORDER-LEFT: #ccc 1px solid; WIDTH: 150px; PADDING-TOP: 2px; BORDER-BOTTOM: #ccc 1px solid; BACKGROUND-COLOR: #ffcb1a; TEXT-ALIGN: center
+}
+.map-show-link A {
+	FONT-SIZE: 14px; COLOR: #333; TEXT-DECORATION: none
+}
+A {
+	COLOR: #d95c15; TEXT-DECORATION: none
+}
+A:hover {
+	PADDING-RIGHT: 3px; PADDING-LEFT: 3px; PADDING-BOTTOM: 3px; COLOR: #d95c15; PADDING-TOP: 3px; BACKGROUND-COLOR: #d95c15; TEXT-DECORATION: underline
+}
+.main_banner {
+	MARGIN-TOP: -20px; BACKGROUND-IMAGE: url(../seasonwatch/images/sw_banner.jpg); WIDTH: 950px; BACKGROUND-REPEAT: no-repeat; HEIGHT: 160px; BACKGROUND-COLOR: #fff
+}
+.small-link {
+	COLOR: #d95c15
+}
+.small-link A {
+	COLOR: #d95c15
+}
+.main-links {
+	MARGIN-TOP: -15px; MARGIN-LEFT: -8px; WIDTH: 390px; TEXT-ALIGN: left
+}
+.main-links TR TD {
+	FONT-SIZE: 14px; PADDING-BOTTOM: 0px; COLOR: #c0c0c0; TEXT-DECORATION: none
+}
+.main-links A {
+	FONT-WEIGHT: bold; COLOR: #d95c15; TEXT-DECORATION: none
+}
+.main-links A:hover {
+	FONT-WEIGHT: bold; COLOR: #d95c15; TEXT-DECORATION: underline
+}
+.menu-links {
+	FONT-SIZE: 17px; BACKGROUND-IMAGE: url(../seasonwatch/images/shim.gif); WIDTH: 950px; COLOR: #d95c15; PADDING-TOP: 4px; BACKGROUND-REPEAT: repeat-x; HEIGHT: 40px
+}
+.menu-links A {
+	FONT-WEIGHT: bold; FONT-SIZE: 15px; COLOR: #fff; TEXT-DECORATION: none
+}
+.menu-links A:hover {
+	COLOR: #ffcb1a
+}
+.submit {
+	BORDER-RIGHT: #666 1px solid; BORDER-TOP: #666 1px solid; BORDER-LEFT: #666 1px solid; WIDTH: 30px; MARGIN-RIGHT: 8px; BORDER-BOTTOM: #666 1px solid
+}
+.logo-box {
+	MARGIN-TOP: 0px; PADDING-BOTTOM: 10px; MARGIN-LEFT: auto; MARGIN-RIGHT: auto; HEIGHT: 110px
+}
+INPUT {
+	BORDER-RIGHT: #777777 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #777777 1px solid; PADDING-LEFT: 5px; FONT-SIZE: 11px; PADDING-BOTTOM: 5px; BORDER-LEFT: #777777 1px solid; PADDING-TOP: 5px; BORDER-BOTTOM: #777777 1px solid
+}
+TEXTAREA {
+	BORDER-RIGHT: #777777 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #777777 1px solid; PADDING-LEFT: 5px; FONT-SIZE: 11px; PADDING-BOTTOM: 5px; BORDER-LEFT: #777777 1px solid; PADDING-TOP: 5px; BORDER-BOTTOM: #777777 1px solid
+}
+.sidebar {
+	BORDER-RIGHT: #777 0px solid; PADDING-RIGHT: 1.5em; BORDER-TOP: #777 0px solid; MARGIN-TOP: -19px; PADDING-LEFT: 1.5em; FLOAT: right; MARGIN-BOTTOM: 1.5em; PADDING-BOTTOM: 1.5em; BORDER-LEFT: #777 0px solid; WIDTH: 200px; MARGIN-RIGHT: 10px; PADDING-TOP: 1.5em; BORDER-BOTTOM: #777 0px solid; BACKGROUND-COLOR: #fff
+}
+.sidebar-header {
+	FONT-WEIGHT: bold; MARGIN-LEFT: auto; COLOR: #d95c15; MARGIN-RIGHT: auto; TEXT-ALIGN: center; 1: 
+}
+SELECT {
+	BORDER-RIGHT: #777 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #777 1px solid; PADDING-LEFT: 5px; FONT-SIZE: 11px; PADDING-BOTTOM: 5px; BORDER-LEFT: #777 1px solid; WIDTH: 228px; PADDING-TOP: 5px; BORDER-BOTTOM: #777 1px solid
+}
+.filter {
+	BORDER-RIGHT: #777 1px solid; PADDING-RIGHT: 10px; BORDER-TOP: #777 1px solid; PADDING-LEFT: 10px; PADDING-BOTTOM: 10px; MARGIN-LEFT: auto; BORDER-LEFT: #777 1px solid; WIDTH: 930px; MARGIN-RIGHT: auto; PADDING-TOP: 10px; BORDER-BOTTOM: #777 1px solid
+}
+.filter TD:first-child {
+	FONT-WEIGHT: bold
+}
+.filter TD + TD {
+	FONT-WEIGHT: bold
+}
+.search-box {
+	PADDING-RIGHT: 10px; PADDING-LEFT: 10px; BACKGROUND: url(../seasonwatch/images/boxshadow.gif) #fff no-repeat left bottom; PADDING-BOTTOM: 10px; WIDTH: 200px; MARGIN-RIGHT: 8px; PADDING-TOP: 10px; LIST-STYLE-TYPE: none
+}
+.edittable {
+	MARGIN-LEFT: auto; WIDTH: 930px; MARGIN-RIGHT: auto
+}
+.blockquote {
+	BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid; BACKGROUND-COLOR: #d95c15; WORD-WRAP: break-word
+}
+H2 {
+	BORDER-TOP: #d95c15 1px solid; COLOR: #d95c15; PADDING-TOP: 10px
+}
+H1 {
+	COLOR: #d95c15
+}
+.caption {
+	FONT-WEIGHT: bold; FONT-SIZE: 14px; COLOR: #d95c15; FONT-STYLE: italic
+}
+.cms P {
+	FONT-SIZE: 13px
+}
+H3 {
+	FONT-WEIGHT: bold; FONT-SIZE: 18px; COLOR: #d95c15
+}
+H4 {
+	MARGIN-TOP: 10px; FONT-SIZE: 15px; MARGIN-BOTTOM: 0px; COLOR: #d95c15
+}
+.login_page {
+	MARGIN-TOP: 20px; MARGIN-LEFT: auto; WIDTH: 500px; MARGIN-RIGHT: auto; BACKGROUND-COLOR: #ffcb1a
+}
+.login_page TD:first-child {
+	FONT-WEIGHT: bold; TEXT-ALIGN: right
+}
+.login_page A {
+	COLOR: #d95c15; TEXT-DECORATION: underline
+}
+UNKNOWN {
+	BORDER-RIGHT: #c00 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #c00 1px solid; PADDING-LEFT: 5px; PADDING-BOTTOM: 5px; MARGIN: 2px; FONT: bold 10px verdana; BORDER-LEFT: #c00 1px solid; WIDTH: 500px; COLOR: #ff0000; PADDING-TOP: 5px; BORDER-BOTTOM: #c00 1px solid; BACKGROUND-COLOR: #f5deb3
+}

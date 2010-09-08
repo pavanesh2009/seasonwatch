@@ -1,26 +1,13 @@
-<?php 
-include './includes/dbc.php';
-page_protect();
-
+<? 
+   session_start();
+   $page_title="SeasonWatch";
+   include("main_includes.php");
+   include './includes/dbc.php';
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
-<head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-<title>SeasonWatch : Add a new Location</title>
-<link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print">
-<link rel="stylesheet" href="blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
-<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<link rel="stylesheet" href="css/styles_new.css" type="text/css"></link>
-<link rel="stylesheet" href="css/sighting.css" type="text/css"></link>
-<script type="text/javascript" src="jquery.validate.js"></script>
-<script type="text/javascript" src="jquery.form.js"></script>
-<!--<script type="text/javascript" src="http://maps.google.com/maps?file=api&v=2&sensor=true&key=ABQIAAAAz2GdKU-VPA5WYpd4RF7AQxTAtgX-6aoE9zEkmxGVRHN2Hj-ZSRSK3wGiUAuG-lhBGFCY_8nhhJ6vHA"></script>
+<!--<script type="text/javascript" src="http://maps.google.com/maps?file=api&v=2&sensor=true&key=ABQIAAAAj3UilF0JUxStHMEeZ6myXxRoA5S-3Z3wsvNu5GgYp0l_QSL5PRRjXmVlRmkaRo256GwWQtR1lEvVFQ"></script>
 // Note: you will need to replace the sensor parameter below with either an explicit true or false value.-->
-<script type="text/javascript" src="http://maps.google.com/maps?file=api&v=2&sensor=false&key=ABQIAAAAD7le_JdD5K74PSSUBnObehRsHoBIMdGoj7fYMR4ZU5G-PLcp5xQErnuU0KTDUg_ffjopaA7ztNS01g"></script>
-<script type="text/javascript" src="http://maps.gstatic.com/intl/en_ALL/mapfiles/208a/maps2.api/main.js"></script>
+<script type="text/javascript" src="http://maps.google.com/maps?file=api&v=2&sensor=false&key=ABQIAAAAj3UilF0JUxStHMEeZ6myXxRoA5S-3Z3wsvNu5GgYp0l_QSL5PRRjXmVlRmkaRo256GwWQtR1lEvVFQ"></script>
+<!--<script type="text/javascript" src="http://maps.gstatic.com/intl/en_ALL/mapfiles/208a/maps2.api/main.js"></script>
 <script type="text/javascript" charset="UTF-8" src="http://maps.gstatic.com/cat_js/intl/en_ALL/mapfiles/208a/maps2.api/%7Bmod_drag,mod_ctrapi,mod_scrwh,mod_kbrd,mod_api_gc%7D.js"></script>
 <script type="text/javascript" charset="UTF-8" src="http://maps.gstatic.com/intl/en_ALL/mapfiles/208a/maps2.api/mod_apiiw.js"/></script>
 <script type="text/javascript" charset="UTF-8" src="http://maps.gstatic.com/intl/en_ALL/mapfiles/208a/maps2.api/mod_exdom.js"/></script>
@@ -31,7 +18,12 @@ page_protect();
 </style>
 <style>
 .error { color: red; }
-</style>
+</style>-->
+
+<script type="text/javascript">
+			google.load("jquery", '1.2.6');
+			google.load("maps", "2.x");
+</script>
 
 <script type="text/javascript">
 var map;
@@ -44,6 +36,9 @@ String.prototype.trim = function() {
  function initialize() {
  map = new GMap2(document.getElementById("map"),{size:new GSize(700,350)});
  map.setCenter(new GLatLng(22.97,77.56), 4);
+var bounds = new GLatLngBounds();
+var geo = new GClientGeocoder(); 
+
  map.setUIToDefault();
  /*map.enableGoogleBar();
  map.getControl(new GMapTypeControl()); 
@@ -56,17 +51,48 @@ map.addControl(mapTypeControl, topRight);
  document.getElementById("hmtctl").style.height="200px";*/
  
  GEvent.addListener(map, "click", getAddress);
+ GEvent.addListener(map, "zoomend", changeZoom);
  geocoder = new GClientGeocoder();
  }
-
+function changeZoom(from_zoom,to_zoom) {
+if(map.getZoom()<15)
+	document.getElementById('zoom_level').innerHTML="Current Zoom Level: "+String(map.getZoom())+"<br/>(Unacceptable. Ideal Zoom Level: >=18. Min Accepted Zoom Level: 15)";
+else if(map.getZoom()<18)
+	document.getElementById('zoom_level').innerHTML="Current Zoom Level: "+String(map.getZoom())+"<br/>(Acceptable but please zoom in more. Ideal Zoom Level: >=18)";
+else
+	document.getElementById('zoom_level').innerHTML="Current Zoom Level: "+String(map.getZoom())+"<br/>(Satisfactory Zoom Level)";
+}
+ 
 function getAddress(overlay, latlng) {
+map.clearOverlays();
 if (latlng != null) {
 address = latlng;
-geocoder.getLocations(latlng, addAddressToMap);
+geocoder.getLocations(latlng, function(addresses) {
+          if(addresses.Status.code != 200) {
+            alert("reverse geocoder failed to find an address for " + latlng.toUrlValue());
+          }
+          else {
+            address = addresses.Placemark[0];
+            point = new GLatLng(latlng.y, latlng.x);
+			if (map.getZoom() < 9) {
+				map.setCenter(point, 9);
+			}
+			var final_address = address.address;
+            marker = new GMarker(point);
+            map.addOverlay(marker);
+			marker.openInfoWindowHtml(final_address + '<br>' +
+				'<b>Country code:</b> ' + address.AddressDetails.Country.CountryNameCode);
+            if(final_address) { setLocationValues(final_address); }
+              document.getElementById('lat').value = latlng.y;
+             document.getElementById('lng').value = latlng.x;
+			 document.getElementById('country').value = address.AddressDetails.Country.CountryName;
+          }
+        });
 }
 }
 
 function addAddressToMap(response) {
+//alert("in addAddrtoMap");
 map.clearOverlays();
 if (!response || response.Status.code != 200) {
 alert("Sorry, we were unable to geocode that address");
@@ -75,7 +101,10 @@ alert("Sorry, we were unable to geocode that address");
 place = response.Placemark[0];
 point = new GLatLng(place.Point.coordinates[1],
 place.Point.coordinates[0]);
-map.setCenter(point, 9);
+if (map.getZoom() < 9) {
+	map.setCenter(point, 9);
+}
+
 marker = new GMarker(point);
 map.addOverlay(marker);
 marker.openInfoWindowHtml(place.address + '<br>' +
@@ -85,10 +114,20 @@ document.getElementById('lng').value = place.Point.coordinates[0];
 document.getElementById('country').value = place.AddressDetails.Country.CountryName;
 
  if(place.address) {
- var a1 = place.address;
- a1 = a1.split(',');
+	setLocationValues(place.address);
  }
+ }
+ }
+
+function setLocationValues(place)
+{
+
+ var a1 = place;
+
+ a1 = a1.split(',');
+ 
  var arcount = a1.length;
+ //alert(a1[arcount - 2]);
  var state_name= a1[arcount - 2];
  state_name = state_name.trim();
  $("#state").val(state_name);
@@ -104,19 +143,15 @@ document.getElementById('country').value = place.AddressDetails.Country.CountryN
 
  if( a1[arcount - 5] ) {
  document.getElementById('loc_name').value = a1[arcount - 5] + ', ' + document.getElementById('loc_name').value;
- } else {
- document.getElementById('loc_name').value = '';
- }
+ } 
 
  if( a1[arcount - 6] ) {
  document.getElementById('loc_name').value = a1[arcount - 6] + ', ' + document.getElementById('loc_name').value;
- } else {
- document.getElementById('loc_name').value = '';
- }
+ } 
  }
  document.getElementById('zoom').value = map.getZoom();
- }
- }
+}
+
 // showLocation() is called when you click on the Search button
 // in the form. It geocodes the address entered into the form
 // and adds a marker to the map at that location.
@@ -138,7 +173,7 @@ showLocation();
 </script>
 
 
-<!-- <script type="text/javascript">
+<!--<script type="text/javascript">
 $(document).ready(function() {
 $("#addNewLocation").validate({
 rules: {
@@ -176,7 +211,7 @@ $('#addNewLocation').ajaxForm({
  }
  });
 });
-</script> --> 
+</script> -->
 
 
 <script type="text/javascript"> 
@@ -187,14 +222,22 @@ with (field)
   if (value==null||value=="")
     { 
     alert(alerttxt);return false;
-} 
+}
+}
+
+if (field.name=="country")
+{
+if (field.value!="India")
+{
+    alert(alerttxt);return false;
+}
 }
 }
 
 function validate_zoomfactor(alerttxt)
 {
 //alert ("in zoomfactor validation. zoom factor is: "+map.getZoom());
-  if (map.getZoom() < 9)
+  if (map.getZoom() < 15)
     { 
 	    alert(alerttxt);
    	 return false;
@@ -206,29 +249,33 @@ function validate_form(thisform)
 //alert("here"+map.getZoom());
 with (thisform)
 {
-if (validate_required(loc_name,"Location name must be filled out!")==false)
+if (validate_required(loc_name,"Location name must be filled out")==false)
 {
 loc_name.focus();return false;
 }
 
-if (validate_required(lat,"Please Use Map to find lattitude!")==false)
+if (validate_required(lat,"Please Use Map to find latitude")==false)
 {
 lat.focus();return false;
 }
 
-if (validate_required(lng,"Please Use Map to find longitude!")==false)
+if (validate_required(lng,"Please Use Map to find longitude")==false)
 {
 lng.focus();return false;
 }
 
-if (validate_required(city,"city name must be filled out!")==false)
+if (validate_required(city,"City name must be filled out")==false)
 {
 city.focus();return false;
 }
 
-if (validate_required(state,"state name must be filled out!")==false)
+if (validate_required(state,"State name must be filled out")==false)
 {
 state.focus();return false;
+}
+if (validate_required(country,"Please choose a location in India")==false)
+{
+return false;
 }
 if (validate_zoomfactor("Please zoom closer using the + button on the map and select your location")==false)
 {
@@ -241,7 +288,7 @@ return true;
 }
 }
 </script> 
-</head> 
+
 
 <body onload="initialize()" style="">
 <div id="add_loc_box_<? echo $type; ?>">
@@ -254,11 +301,12 @@ return true;
 2. Zoom and click on the map directly <br/>
 <b> Please zoom in as near as possible and click on the exact location of your
 tree</b><br/><br/>
-<p style="text-align:center">
+<div style="text-align:center">
 <b>Search for a location</b>:
 <input type="text" name="q" value="" class="address_input" style="width:400px">
 <input style="width:80px;background-color:#333; color:#fff; margin-left:-2px" type="submit" name="find" value="Search" class="submit"/>
-</p> 
+<div id="zoom_level" style="text-align: center; margin-top: 0px; margin-bottom: 0px;">Current Zoom Level: 4<br/>(Unacceptable. Ideal Zoom Level: >=18. Min Accepted Zoom Level: 15)</div>
+</div> 
 </form>
 
 <!--Location FillUp Form--> 
@@ -303,7 +351,7 @@ tree</b><br/><br/>
 <div style="position: absolute; left: 0px; top: 0px; z-index: 107; cursor: default;"/>
 </div>
 </div>
-<div id="logocontrol" class="gmnoprint" style="-moz-user-select: none; z-index: 0; position: absolute; left: 2px; bottom: 2px;"><a title="Click to see this area on Google Maps" href="http://maps.google.com/maps?ll=22.97,77.56&amp;spn=24.123284,61.523438&amp;z=4&amp;key=ABQIAAAAz2GdKU-VPA5WYpd4RF7AQxTAtgX-6aoE9zEkmxGVRHN2Hj-ZSRSK3wGiUAuG-lhBGFCY_8nhhJ6vHA&amp;sensor=true&amp;mapclient=jsapi&amp;oi=map_misc&amp;ct=api_logo" target="_blank"><img style="border: 0px none ; margin: 0px; padding: 0px; width: 62px; height: 30px; -moz-user-select: none; cursor: pointer;" src="http://maps.gstatic.com/intl/en_ALL/mapfiles/poweredby.png"/></a>
+<div id="logocontrol" class="gmnoprint" style="-moz-user-select: none; z-index: 0; position: absolute; left: 2px; bottom: 2px;"><a title="Click to see this area on Google Maps" href="http://maps.google.com/maps?ll=22.97,77.56&amp;spn=24.123284,61.523438&amp;z=4&amp;key=ABQIAAAAj3UilF0JUxStHMEeZ6myXxRoA5S-3Z3wsvNu5GgYp0l_QSL5PRRjXmVlRmkaRo256GwWQtR1lEvVFQ&amp;sensor=true&amp;mapclient=jsapi&amp;oi=map_misc&amp;ct=api_logo" target="_blank"><img style="border: 0px none ; margin: 0px; padding: 0px; width: 62px; height: 30px; -moz-user-select: none; cursor: pointer;" src="http://maps.gstatic.com/intl/en_ALL/mapfiles/poweredby.png"/></a>
 </div>
 <div style="-moz-user-select: none; z-index: 0; position: absolute; right: 3px; bottom: 2px; color: black; font-family: Arial,sans-serif; font-size: 11px; white-space: nowrap; text-align: right;" dir="ltr">
 <span/>
@@ -376,26 +424,22 @@ tree</b><br/><br/>
 <tr>
 <td style='text-align:right'>New Location Name</td>
 <td>
-<input type="text"  style="width:163px" id="loc_name" name="loc_name" >
+<input type="text"   id="loc_name" name="loc_name" >
 </td>
 <td style='text-align:right'>Latitude</td>
 <td>
 <input type=text id="lat" name="lat" value="">
 </td>
-
-
-<td style='text-align:right'>Longitude</td>
+<td >Longitude</td>
 <td><input type=text id="lng" name="lng" value=""></td>
 </tr>
-
 <tr>
-
 <td style='text-align:right'>City/Town/Village</td>
 <td><input type=text id="city" name="city" value=""></td>
 
 <td style='text-align:right'>State</td>
 <td>
-<SELECT name=state id="state">
+<SELECT name=state id="state" style="width:130px;">
 <option value="">Select a State</option>
 <?php
 $result = mysql_query("SELECT state_id, state FROM seswatch_states ORDER BY state");
@@ -417,12 +461,11 @@ $result = mysql_query("SELECT state_id, state FROM seswatch_states ORDER BY stat
 </td>
 
 </tr>
-
 <!-- <input type="hidden" id="city" name="city" value=""> -->
 <input type="hidden" id="country" name="country" value="">
 <input type="hidden" name="zoom" id="zoom" value="">
 <tr>
-<td colspan=4 style="text-align:center">
+<td></td><td></td><td></td><td>
 <input type="submit"  name="Submit" id="Submit" value="Add Location" class=buttonstyle> 
 </td>
 </tr>

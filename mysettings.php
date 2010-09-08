@@ -29,10 +29,18 @@ list($old) = mysql_fetch_row($rs_pwd);
 	else
 	{
 	
-		$newmd5 = md5(mysql_real_escape_string($_POST['pwd_new']));
-		//echo $_SESSION[user_id];		mysql_query("update users set pwd='$newmd5' where user_id='$_SESSION[user_id]'");
-		header("Location: mysettings.php?msg=Your new password is updated");
-		exit();
+		$newmd5 = md5($_POST['pwd_new']);
+		//echo "userid: ". $_SESSION[user_id] . "   new pwd: " . $_POST['pwd_new'] . "md5: " . $newmd5;
+		$sql="UPDATE users SET pwd='" . $newmd5 . "' WHERE user_id='" . $_SESSION[user_id] . "'";
+		//echo $sql;		$sql_result = mysql_query($sql);
+		if ($sql_result) {
+				header("Location: mysettings.php?msg=Your new password is updated");
+				exit();
+			}
+		else {
+			header("Location: mysettings.php?msg=error: " . mysql_error());
+			exit();
+		}
 	}
 	} else
 	{
@@ -71,35 +79,31 @@ mysql_query("UPDATE users SET
 header("Location: mysettings.php?msg=Your updates have been saved");
  } 
 ?>
-
-<html>
-<head>
-<title>My Account Settings</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<? 
+   session_start();
+   $page_title="SeasonWatch";
+   include("main_includes.php");
+?>
 <script>
   $(document).ready(function(){
     $("#myform").validate();
 	 $("#pform").validate();
   });
 </script>
-<?php 
-include ("contribheader_head.php");
-?>
 
 </head>
 
 <body>
-<link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print">
-<link rel="stylesheet" href="blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
-<link href="./css/styles_new.css" rel="stylesheet" type="text/css"></link>
-<script language="JavaScript" type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<script language="JavaScript" type="text/javascript" src="js/jquery.validate.js"></script>
 
-<?php include("contribheader_body.php");
+<?php include("header.php");
 ?>
 
 <div class="container first_image" style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;">
+<div id='tab-set'>   
+     <ul class='tabs'>
+        <li><a href='#x' class='selected'>my profile</a></li>
+    </ul>
+</div>
 <table>
 <tbody>
 <tr>
@@ -118,7 +122,7 @@ include ("contribheader_head.php");
 <td width="160" valign="top"></td>  
 
 <td width="732" valign="top">
-<h3>My Profile Information</h3>
+
 <p>
 <?php
 if (isset($_GET['msg'])) {
@@ -135,7 +139,7 @@ while ($row_settings = mysql_fetch_array($rs_settings)) {?>
 <table width="90%" border="0" align="center" cellpadding="3" cellspacing="3" class="forms">
 <tr> 
 <td colspan="2"> Your Name <br> <input name="name" type="text" id="name"  value="<? echo $row_settings['full_name']; ?>" size="30"> 
-<span class="example">Your name</span></td>
+<span class="example"></span></td>
 </tr>
 <tr> 
 
@@ -265,5 +269,8 @@ STD<input type="text" name="landline_stdcode"  value="<? echo $row_settings['lan
 <div class="container bottom">
 <?php mysql_close($link);?>
 </div>
+<?php 
+   include("footer.php");
+?>
 </body>
 </html>

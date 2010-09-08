@@ -1,21 +1,9 @@
-<?php 
-include './includes/dbc.php';
-page_protect();
-?> 
+<? 
+   session_start();
+   $page_title="SeasonWatch";
+   include("main_includes.php");
+?>
 
-<!--Displaying data into dropdown -->
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection"></link>
-<link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print"></link>
-<link rel="stylesheet" href="blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection"><link>
-<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="js/jquery.validate.js"></script>
-<link rel="stylesheet" href="css/styles_new.css" type="text/css"></link>
-<script type="text/javascript" src="js/jquery.js"></script>
-<script type='text/javascript' src='js/jquery.autocomplete.js'></script>
-<link rel="stylesheet" type="text/css" href="js/jquery.autocomplete.css" />
 
 <script type="text/javascript">
 $().ready(function() {
@@ -68,17 +56,19 @@ return false;
 return true;
 }
 </script>
-<?php
-include ("contribheader_head.php");
-?>
-</head>
+
 
 
 <body>
 <?php
-include ("contribheader_body.php");
+include ("header.php");
 ?>
 <div class="container first_image" style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;">
+   <div id='tab-set'>   
+     <ul class='tabs'>
+        <li><a href='#x' class='selected'>add tree</a></li>
+    </ul>
+   </div>
 <div>
 <hr/>
 </div>
@@ -88,6 +78,15 @@ include ("contribheader_body.php");
 <!-- <h3>Identify a species using any of the 3 options below</h3> -->
 <table style="width: 930px; margin-left: auto; margin-right: auto;">
 <tbody>
+<tr>&nbsp;&nbsp;&nbsp;&nbsp;</tr>
+<tr><td class="cms">
+This list contains only those species selected for being
+monitored under SeasonWatch. If you want to suggest additional species
+for this list, please write to sw@seasonwatch.in
+</td>
+</tr>
+<tr>&nbsp;&nbsp;</tr>
+
 <tr>
 <td  width="450px">
 <h3>Add a Tree through Keyword Search</h3>
@@ -120,13 +119,6 @@ Feather compound<input type="radio" name="leaf_type"/>
 <br/><br/><br/>
 </td>
 </tr>
-<tr>&nbsp;&nbsp;&nbsp;&nbsp;</tr>
-<tr>
-<h6>"This list contains only those species selected for being
-monitored under SeasonWatch. If you want to suggest additional species
-for this list, please write to sw@seasonwatch.in"</h6>
-</tr>
-<tr>&nbsp;&nbsp;</tr>
 
 <tr>
 <td  width="450px">
@@ -135,13 +127,13 @@ for this list, please write to sw@seasonwatch.in"</h6>
 <input type = "hidden" name="species_id" value="name"/>
 
 <!--This is old technique, not required now commented by Pavanesh
-<select name="speciesid" onChange="getspecies_scientific_name(this.value);getfamily(this.value);">-->
+<select name="speciesid" onChange="getspecies_scientific_name(this.value);getfamily(this.value);">-->
 
 
 
 
-<select name="speciesid" id="speciesid"><?php 
-$sql = mysql_query("SELECT species_id,species_primary_common_name, species_scientific_name FROM Species_master ORDER BY species_primary_common_name");
+<select name="speciesid" id="speciesid"><?php 
+$sql = mysql_query("SELECT species_id,species_primary_common_name, species_scientific_name FROM species_master ORDER BY species_primary_common_name");
 while($row = mysql_fetch_array($sql))
 {
 $data1.= "<option  value='".$row['species_id']."'>".$row['species_primary_common_name']." (".$row['species_scientific_name'].")</option>";
@@ -164,5 +156,8 @@ echo $data1;
 </div>
 <div class="container bottom">
 </div>
+<?php 
+   include("footer.php");
+?>
 </body>
 </html>

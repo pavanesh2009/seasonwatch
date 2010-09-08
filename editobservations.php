@@ -1,11 +1,18 @@
-<?php 
-include './includes/dbc.php';
-page_protect();
+<? 
+   session_start();
+   $page_title="SeasonWatch";
+   include("main_includes.php");
+	include './includes/dbc.php';
 ?> 
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $("#obdate").datepicker({minDate: -120, maxDate: '0M +0D', dateFormat: 'yy-mm-dd'});
+  });
+  </script>
 
-<html>
-<head>
-<title>Edit Weekly Observation</title>
 <script>
 function make_blank1()
 {
@@ -22,8 +29,6 @@ document.species1.insect_desc.value ="";
 </script>
 
 
-<!-- <link type="text/css" rel="stylesheet" href="./js/CalendarControl.css">
-<script language="javascript" src="./js/CalendarControl.js"></script> -->
 
 <!--for radio button dependencies-->
 <script type="text/javascript">
@@ -144,27 +149,9 @@ document.species1.fruit_ripe_count[2].checked=false;
 </script>
 
  
- 
- 
-</head>
 
 <body>
-<link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print">
-<link rel="stylesheet" href="blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
-<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="js/jquery.validate.js"></script>
-<link rel="stylesheet" href="css/styles_new.css" type="text/css">
-<!--for Date should be inside body--> 
-<link type="text/css" href="js/calendar/themes/blitzer/ui.datepicker.css" rel="stylesheet" />
-<script language="javascript" src="js/calendar/ui/ui.core.js"></script>
-<script language="javascript" src="js/calendar/ui/ui.datepicker.js"></script>
-<script type="text/javascript">
-$(function() { 
-$("#obdate").datepicker({minDate: -120, maxDate: '0M +0D', dateFormat: 'yy-mm-dd'});
 
-});
-</script> 
 <!-- div used to be of class = container first_image. but since this required a different width changed. haven't yet made a class for this-->
 <div style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;background-color:#fffff9;
  background-image: url('../images/gradientbg.png');
@@ -964,5 +951,9 @@ if($usr_obs_detail['fruit_ripe_count']=='Full')
 </form>
 </div>
 </div>
+<div class="container bottom">
+<?php mysql_close($link);?>
+</div>
+
 </body>
 </html>

@@ -13,7 +13,7 @@ $insertdate=date("Y-m-d",strtotime($_POST['obdate']));
 
 
 if($_POST['Submit'] == 'Submit')  
-{                     foreach($_POST as $key => $value)
+{                     foreach($_POST as $key => $value)
 { 
 $data[$key] = filter($value);
 }   
@@ -38,7 +38,8 @@ $result = "INSERT INTO user_tree_observations
      temperature_min,
      rainfall_mm,
      humidity_mm,
-     user_tree_id) 
+     user_tree_id,
+	 user_id) 
      VALUES
              ( '$insertdate',  
                '$_POST[is_leaf_fresh]', 
@@ -60,18 +61,20 @@ $result = "INSERT INTO user_tree_observations
                '$_POST[temperature_min]',
                '$_POST[rainfall_mm]',
                '$_POST[humidity_mm]', 
-               '$usertreeid'
+               '$usertreeid',
+			   '$_SESSION[user_id]'
                )";  
  // echo $result;
   mysql_query($result,$link) or die("Insertion failed:" .mysql_error());
  
+$sql = mysql_query("UPDATE user_tree_table SET `last_observation_date`='$insertdate' WHERE user_tree_id='$usertreeid';");
   
 $sql = mysql_query("SELECT date,is_leaf_freshs,is_leaf_mature,freshleaf_count,matureleaf_count,is_flower_bud,bud_count,is_flower_open,
      open_flower_count,is_fruit_ripe,fruit_ripe_count,is_fruit_unripe,fruit_unripe_count,animal_desc,birds_desc,insect_desc,temperature_max,temperature_min,rainfall_mm,
      humidity_mm FROM user_tree_observations");
      }
 ?> 
-<html lang="en">
+<!--<html lang="en">
 <head>
 <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
 <title>SeasonWatch</title>
@@ -85,7 +88,7 @@ $sql = mysql_query("SELECT date,is_leaf_freshs,is_leaf_mature,freshleaf_count,ma
 <script type="text/javascript" src="js/jquery.validate.js"></script>
 <link rel="stylesheet" href="css/styles_new.css" type="text/css">
 
-
+-->
 <!--You have Submitted successfully -->
 
 <?php 

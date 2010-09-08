@@ -7,7 +7,8 @@ $speciesId=($_POST['species_id']);
 //echo $speciesId; 
 
 if($_POST['doUpdate'] == 'Update') 
-{                      $sql1 = "UPDATE Species_master SET                                             
+{                      
+$sql1 = "UPDATE species_master SET                                             
                 `species_primary_common_name`= '$_POST[species_primary_common_name]',
        		    `species_scientific_name`= '$_POST[species_scientific_name]',
 	             `family`='$_POST[family]',

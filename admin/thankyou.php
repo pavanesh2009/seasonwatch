@@ -7,11 +7,9 @@
 </head>
 
 <body>
-<link rel="stylesheet" href="../blueprint/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="../blueprint/print.css" type="text/css" media="print">
-<link rel="stylesheet" href="../blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
-<link href="../css/styles_new.css" rel="stylesheet" type="text/css">
-
+<?php
+include ("../main_includes.php");
+?>
 <div class="container first_image" style="-moz-border-radius-bottomleft: 10px; -moz-border-radius-bottomright: 10px;">
 <table>
 <tbody>
